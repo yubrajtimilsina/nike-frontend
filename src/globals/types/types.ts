@@ -11,7 +11,7 @@ interface ICategory {
 
 interface ICollection{
   id:string;
-  collectionName:string;
+  collectionName:string;  // men amd women
 }
 
 export interface IProduct {

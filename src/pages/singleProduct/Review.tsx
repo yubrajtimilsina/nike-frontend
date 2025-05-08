@@ -1,181 +1,40 @@
-import { IProduct } from "../../globals/types/types";
+import { IData } from "../../store/reviewSlice";
 
-
-
-interface IProps{
-    reivew:IProduct
+interface IProps {
+  review: IData;
 }
 
-const Review:React.FC<IProps>  = ({reivew}) => {
+const Review: React.FC<IProps> = ({ review }) => {
   return (
-    <div>
-      <div>
-        <div className="p-4 mx-auto bg-white rounded-lg shadow-md max-w-4xl sm:p-6 grid grid-cols-1 lg:grid-cols-6 gap-6">
-          <div className="lg:col-span-4 col-span-1">
-            <form action method="POST" className="space-y-4">
-              <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-                Write a review
-              </h2>
-              <div className="flex justify-start items-center space-x-1 mb-4">
-                <input
-                  type="radio"
-                  id="5-stars"
-                  name="rating"
-                  defaultValue={5}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="5-stars"
-                  className="text-yellow-400 text-2xl cursor-pointer hover:scale-110"
-                >
-                  ★
-                </label>
-                <input
-                  type="radio"
-                  id="4-stars"
-                  name="rating"
-                  defaultValue={4}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="4-stars"
-                  className="text-yellow-400 text-2xl cursor-pointer hover:scale-110"
-                >
-                  ★
-                </label>
-                <input
-                  type="radio"
-                  id="3-stars"
-                  name="rating"
-                  defaultValue={3}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="3-stars"
-                  className="text-yellow-400 text-2xl cursor-pointer hover:scale-110"
-                >
-                  ★
-                </label>
-                <input
-                  type="radio"
-                  id="2-stars"
-                  name="rating"
-                  defaultValue={2}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="2-stars"
-                  className="text-yellow-400 text-2xl cursor-pointer hover:scale-110"
-                >
-                  ★
-                </label>
-                <input
-                  type="radio"
-                  id="1-star"
-                  name="rating"
-                  defaultValue={1}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="1-star"
-                  className="text-yellow-400 text-2xl cursor-pointer hover:scale-110"
-                >
-                  ★
-                </label>
-              </div>
-              <textarea
-                id="review"
-                name="review"
-                rows={4}
-                required="true"
-                className="block w-full p-3 text-sm text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Write your review"
-                defaultValue={""}
-              />
-              <div className="text-right py-4">
-                <a
-                  href="/user"
-                  className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-3"
-                >
-                  Login to Post Review
-                </a>
-              </div>
-            </form>
-          </div>
-          <div className="lg:col-span-2 hidden lg:flex flex-col space-y-4">
-            <div className="flex items-center">
-              <span className="text-yellow-400 text-xl">★★★★★</span>
-              <p className="ml-2 text-sm font-medium text-gray-900">
-                0 out of 0
-              </p>
-            </div>
-            <p className="text-sm font-medium text-gray-500">
-              0 global ratings
-            </p>
-            <div className="flex items-center mt-2">
-              <span className="text-sm font-medium text-blue-600 hover:underline shrink-0">
-                5 star
-              </span>
-              <div className="w-3/4 h-4 mx-2 bg-gray-200 rounded">
-                <div
-                  className="h-4 bg-yellow-400 rounded"
-                  style={{ width: "50%" }}
-                />
-              </div>
-              <span className="text-sm font-medium text-gray-500">0%</span>
-            </div>
-            <div className="flex items-center">
-              <span className="text-sm font-medium text-blue-600 hover:underline shrink-0">
-                4 star
-              </span>
-              <div className="w-3/4 h-4 mx-2 bg-gray-200 rounded">
-                <div
-                  className="h-4 bg-yellow-400 rounded"
-                  style={{ width: "25%" }}
-                />
-              </div>
-              <span className="text-sm font-medium text-gray-500">0%</span>
-            </div>
-            <div className="flex items-center">
-              <span className="text-sm font-medium text-blue-600 hover:underline shrink-0">
-                3 star
-              </span>
-              <div className="w-3/4 h-4 mx-2 bg-gray-200 rounded">
-                <div
-                  className="h-4 bg-yellow-400 rounded"
-                  style={{ width: "10%" }}
-                />
-              </div>
-              <span className="text-sm font-medium text-gray-500">0%</span>
-            </div>
-            <div className="flex items-center">
-              <span className="text-sm font-medium text-blue-600 hover:underline shrink-0">
-                2 star
-              </span>
-              <div className="w-3/4 h-4 mx-2 bg-gray-200 rounded">
-                <div
-                  className="h-4 bg-yellow-400 rounded"
-                  style={{ width: "5%" }}
-                />
-              </div>
-              <span className="text-sm font-medium text-gray-500">0%</span>
-            </div>
-            <div className="flex items-center">
-              <span className="text-sm font-medium text-blue-600 hover:underline shrink-0">
-                2 star
-              </span>
-              <div className="w-3/4 h-4 mx-2 bg-gray-200 rounded">
-                <div
-                  className="h-4 bg-yellow-400 rounded"
-                  style={{ width: "10%" }}
-                />
-              </div>
-              <span className="text-sm font-medium text-gray-500">0%</span>
-            </div>
-          </div>
+    <section className="bg-white px-1 py-1 md:py-3 ">
+  <div className="max-w-screen-xl ">
+    
+    <div className="flex flex-col   relative">
+      <div className="bg-gray-200 rounded-lg p-8 text-center md:w-1/3">
+        <p className="font-bold uppercase">{review?.User?.username}</p>
+        <p className="text-xl font-light italic text-gray-700">{review.comment}</p>
+        <div className="flex items-center justify-center space-x-2 mt-4">
+        {[...Array(5)].map((_, i) => (
+                  <svg
+                    key={i}
+                    className={`w-5 h-5 ${
+                      i < Math.floor(review?.rating || 0)
+                        ? "text-yellow-400"
+                        : "text-gray-300"
+                    }`}
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
         </div>
       </div>
+      
     </div>
+  </div>
+</section>
+
   );
 };
 export default Review;

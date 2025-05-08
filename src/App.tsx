@@ -11,7 +11,7 @@ import Home from "./pages/Home/Home";
 import WomenCollection from "./pages/product/Collection/WomenCollection";
 import Collections from "./pages/product/Collection/Collections";
 // import ProductDetail from "./pages/singleProduct/ProductDetail";
-import MenPage from "./pages/Home/ManPage";
+// import MenPage from "./pages/Home/ManPage";
 import ProductFilters from "./pages/product/components/ProductFilters";
 import ProductDetail from "./pages/singleProduct/ProductDetail";
 
@@ -32,12 +32,13 @@ const App = () => {
   <Route path="/men/:brand" element={<ProductFilters/>} />
 
   {/* Women collection routes */}
-  <Route path="/women" element={<WomenCollection />} />
-  <Route path="/women/:brand" element={<WomenCollection />} />
+  <Route path="/women" element={<ProductFilters />} />
+  <Route path="/women/:brand" element={<ProductFilters />} />
 
   {/* Other routes */}
   <Route path="/collections" element={<Collections />} />
   <Route path="/men/:brand/:id" element={<ProductDetail />} />
+
 </Routes>
 
       </BrowserRouter>

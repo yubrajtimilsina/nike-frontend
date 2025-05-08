@@ -7,8 +7,8 @@ import ProductCard from "./ProductCard";
 const ProductFilters = () => {
   const [activeBrand, setActiveBrand] = useState<string>("All");
   const dispatch = useAppDispatch();
-  const { products, status } = useAppSelector((store) => store.products);
-  const { brand } = useParams();
+  const { products } = useAppSelector((store) => store.products);
+  const { brand,collection } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,14 +20,20 @@ const ProductFilters = () => {
   }, [brand]);
 
   const brands = ["All", ...new Set(products.map((product) => product.brand))];
+ 
+  const filtered = products.filter((product) => {
+    const matchCollection = collection
+      ? product.Collection.some((c) =>
+          c.collectionName.toLowerCase() === collection.toLowerCase()
+        )
+      : true;
 
-  const filterProducts =
-    activeBrand === "All"
-      ? products
-      : products.filter(
-          (p) => p.brand.toLowerCase() === activeBrand.toLowerCase()
-        );
+    const matchBrand = brand
+      ? product.brand.toLowerCase() === brand.toLowerCase()
+      : true;
 
+    return matchCollection && matchBrand;
+  });
   const handleBrandClick = (selectBrand: string) => {
     if (selectBrand === "All") navigate("/men");
     else navigate(`/men/${selectBrand}`);
@@ -60,11 +66,17 @@ const ProductFilters = () => {
       <section className="py-12 bg-white flex flex-col items-center">
        
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            { filterProducts.length>0 && filterProducts.map((product) => (
+            { filtered.length>0 && filtered.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
       </section>
+         {/* View More Button */}
+         <div className="mt-12 text-center">
+          <button className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-md font-medium transition duration-300">
+            View More Products
+          </button>
+        </div>
     </section>
   );
 };

@@ -2,7 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/types";
 import { APIS } from "../globals/http";
 import { AppDispatch } from "./store";
-
+interface user {
+  id: string | null;
+  username: string | null;
+}
 export interface IData {
   id: string | null;
   productId: string | null;
@@ -10,6 +13,8 @@ export interface IData {
   comment: string | null;
   rating: number | null;
   createdAt: string | null;
+  updatedAt: string | null;
+  User: user;
 }
 export interface IReview {
   review: IData[];
@@ -22,7 +27,7 @@ const initialState: IReview = {
 };
 
 const reviewSlice = createSlice({
-  name: "review",
+  name: "reviews",
   initialState,
   reducers: {
     setReview(state: IReview, action: PayloadAction<IData[]>) {
@@ -37,10 +42,10 @@ const reviewSlice = createSlice({
 export const { setReview, setStatus } = reviewSlice.actions;
 export default reviewSlice.reducer;
 
-export function fetchReview(id: string) {
+export function fetchReview() {
   return async function fetchReviewThunk(dispatch: AppDispatch) {
     try {
-      const res = await APIS(`http://localhost:5001/reviews/${id}`);
+      const res = await APIS("/reviews");
 
       if (res.status === 200) {
         dispatch(setStatus(Status.SUCCESS));

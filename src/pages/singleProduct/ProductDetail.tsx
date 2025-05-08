@@ -3,16 +3,23 @@ import { useParams, Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchProduct } from "../../store/productSlice";
 import Review from "./Review";
+import { fetchReview } from "../../store/reviewSlice";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const { product } = useAppSelector((state) => state.products);
+
+  const { review,status } = useAppSelector((state) => state.reviews);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
+
   useEffect(() => {
-    if (id) dispatch(fetchProduct(id));
+    if (id) {dispatch(fetchProduct(id))
+      dispatch(fetchReview())
+    }
+    ;
   }, [id]);
 
   const handleQuantityChange = (value: number) => {
@@ -27,6 +34,7 @@ const ProductDetail = () => {
   };
 
   return (
+    <>
     <section className="py-12 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-sm text-gray-600 mb-6">
@@ -191,9 +199,48 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
-      <Review />
+      <section>
+        {status === "loading" ? (
+          <div className="text-center py-12">
+            <svg
+              className="animate-spin h-8 w-8 text-indigo-600 mx-auto"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4.293 9.293a1 1 0 011.414 0L12 15.586l6.293-6.293a1 1 0 111.414 1.414l-7 7a1 1 0 01-1.414 0l-7-7a1 1 0 010-1.414z"
+              ></path>
+            </svg>
+          </div>
+        ) : review.length > 0 ? (
+          <>
+            <h2 className="font-black text-black text-center text-3xl leading-none uppercase max-w-2xl mx-auto mb-12">
+              What Customers Are Saying
+            </h2>
+            {review.map((review) => (
+              <Review key={review.id} review={review} />
+            ))}
+          </>
+        ) : (
+          <p className="text-center text-gray-600">No reviews available.</p>
+        )}
+      </section>
+      
     </section>
+    </>
   );
+
 };
 
 export default ProductDetail;
