@@ -58,7 +58,8 @@ const ProductDetail = () => {
             <div className="mb-4 flex justify-between items-start">
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold mb-2">{product?.name}</h1>
-                <p className="text-gray-600">{product?.brand}</p>
+                <p className="text-gray-600 font-bold">{product?.brand}</p>
+                <p className="text-gray-600">{product?.Collection?.collectionName}</p>
               </div>
               {product?.isNew && (
                 <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-md">

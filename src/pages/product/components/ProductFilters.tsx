@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { fetchProducts } from "../../../store/productSlice";
 import ProductCard from "./ProductCard";
@@ -11,6 +11,8 @@ const ProductFilters = () => {
   const { brand,collection } = useParams();
   const navigate = useNavigate();
 
+  
+
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
@@ -20,24 +22,24 @@ const ProductFilters = () => {
   }, [brand]);
 
   const brands = ["All", ...new Set(products.map((product) => product.brand))];
- 
   const filtered = products.filter((product) => {
-    const matchCollection = collection
-      ? product.Collection.some((c) =>
-          c.collectionName.toLowerCase() === collection.toLowerCase()
-        )
-      : true;
-
     const matchBrand = brand
       ? product.brand.toLowerCase() === brand.toLowerCase()
       : true;
-
-    return matchCollection && matchBrand;
+  
+    const matchCollection = collection
+      ? product.Collection?.collectionName.toLowerCase() === collection.toLowerCase()
+      : true;
+  
+    return matchBrand && matchCollection;
   });
-  const handleBrandClick = (selectBrand: string) => {
-    if (selectBrand === "All") navigate("/men");
-    else navigate(`/men/${selectBrand}`);
+  console.log(collection)
+  
+  const handleBrandClick = (selectedBrand: string) => {
+    if (selectedBrand === "All") navigate(`/${collection}`);
+    else navigate(`/${collection}/${selectedBrand}`);
   };
+  
 
   return (
     <section className="py-8 bg-gray-50">
@@ -64,19 +66,19 @@ const ProductFilters = () => {
       </div>
 
       <section className="py-12 bg-white flex flex-col items-center">
-       
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            { filtered.length>0 && filtered.map((product) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {filtered.length > 0 &&
+            filtered.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div>
-      </section>
-         {/* View More Button */}
-         <div className="mt-12 text-center">
-          <button className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-md font-medium transition duration-300">
-            View More Products
-          </button>
         </div>
+      </section>
+
+      <div className="mt-12 text-center">
+        <button className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-md font-medium transition duration-300">
+          View More Products
+        </button>
+      </div>
     </section>
   );
 };

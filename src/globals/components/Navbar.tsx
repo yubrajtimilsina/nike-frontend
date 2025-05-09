@@ -32,12 +32,12 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-indigo-600">Footcap</Link>
+          <Link to="/" className="text-2xl font-bold text-indigo-600">Nike</Link>
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8 items-center">
             <Link to="/" className="font-medium hover:text-indigo-600">Home</Link>
-            <Link to="/men" className="font-medium hover:text-indigo-600">Men</Link>
+            <Link to="/man" className="font-medium hover:text-indigo-600">Men</Link>
             <Link to="/women" className="font-medium hover:text-indigo-600">Women</Link>
             <Link to="/collections" className="font-medium hover:text-indigo-600">Collections</Link>
             <Link to="/contact" className="font-medium hover:text-indigo-600">Contact</Link>

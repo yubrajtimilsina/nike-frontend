@@ -38,7 +38,7 @@ export interface IProduct {
   rating: number;
   collectionId: string;
   totalStock: number;
-  Collection: ICollection[];
+  Collection: ICollection;
 }
 
 export interface IProducts {
