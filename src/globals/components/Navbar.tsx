@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../store/authSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { data, Link, useNavigate } from 'react-router-dom';
+import { fetchCartItems } from '../../store/cartSlice';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,6 +17,8 @@ export default function Header() {
     const checkAuth = () => {
       const localToken = localStorage.getItem('tokenauth');
       setIsLogin(!!reduxToken || !!localToken);
+      if(isLogin)
+        dispatch(fetchCartItems())
     };
     checkAuth();
   }, [reduxToken]);
@@ -39,7 +42,7 @@ export default function Header() {
             <Link to="/" className="font-medium hover:text-indigo-600">Home</Link>
             <Link to="/man" className="font-medium hover:text-indigo-600">Men</Link>
             <Link to="/women" className="font-medium hover:text-indigo-600">Women</Link>
-            <Link to="/collections" className="font-medium hover:text-indigo-600">Collections</Link>
+            <Link to="/collection" className="font-medium hover:text-indigo-600">Collections</Link>
             <Link to="/contact" className="font-medium hover:text-indigo-600">Contact</Link>
             
             {/* Auth buttons - desktop */}
@@ -72,7 +75,7 @@ export default function Header() {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-              <span className="sr-only">Cart</span>
+              <span className="sr-only">Cart  <sup>{data.length > 0 ? data.length : 0}</sup>  </span>
             </button>
             {!isLogin && (
               <button className="p-2 rounded-full hover:bg-gray-100 hidden sm:inline-block">

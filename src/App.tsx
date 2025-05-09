@@ -7,13 +7,10 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import Navbar from "./globals/components/Navbar";
 import Home from "./pages/Home/Home";
-// import MenCollection from "./pages/product/Collection/MenCollection";
-// import WomenCollection from "./pages/product/Collection/WomenCollection";
-// import Collections from "./pages/product/Collection/Collections";
-// import ProductDetail from "./pages/singleProduct/ProductDetail";
-// import MenPage from "./pages/Home/ManPage";
+
 import ProductFilters from "./pages/product/components/ProductFilters";
 import ProductDetail from "./pages/singleProduct/ProductDetail";
+import Collections from "./pages/product/Collection/Collections";
 
 const App = () => {
   return (
@@ -41,6 +38,9 @@ const App = () => {
 
 
   <Route path="/:collection/:brand/:id" element={<ProductDetail />} />
+  <Route path="/collection" element={<Collections />} />
+
+  
 
 </Routes>
 

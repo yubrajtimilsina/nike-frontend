@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchProduct } from "../../store/productSlice";
 import Review from "./Review";
 import { fetchReview } from "../../store/reviewSlice";
+import { addToCart } from "../../store/cartSlice";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -13,6 +14,7 @@ const ProductDetail = () => {
   const { review,status } = useAppSelector((state) => state.reviews);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
+
 
 
   useEffect(() => {
@@ -29,9 +31,6 @@ const ProductDetail = () => {
     }
   };
 
-  const addToCart = () => {
-    console.log("Added to cart", { product, selectedSize, quantity });
-  };
 
   return (
     <>
