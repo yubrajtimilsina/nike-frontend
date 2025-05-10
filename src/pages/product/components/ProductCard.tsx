@@ -7,10 +7,7 @@ interface ICardProps {
 
 const ProductCard: React.FC<ICardProps> = ({ product }) => {
   // Determine the image URL
-  const imageUrl =
-    product.images.includes('cloudinary.com')
-      ? product.images
-      : `http://localhost:5001/${product.images}`;
+  
 
   return (
     <Link to={`/men/${product.brand}/${product.id}`}>
@@ -32,10 +29,15 @@ const ProductCard: React.FC<ICardProps> = ({ product }) => {
         {/* Product Image */}
         <div className="h-64 overflow-hidden">
           <img
-            src={imageUrl}
-            alt={product.name}
-            className="w-full h-full object-cover transition duration-300 group-hover:scale-105"
-          />
+  src={
+    product?.images?.[0]?.includes("cloudinary.com")
+      ? product?.images[0]
+      : `http://localhost:5001/${product?.images[0]}`
+  }
+  alt={product?.name}
+  className="w-full h-auto rounded"
+/>
+
         </div>
 
         {/* Product Info */}

@@ -11,6 +11,7 @@ import Home from "./pages/Home/Home";
 import ProductFilters from "./pages/product/components/ProductFilters";
 import ProductDetail from "./pages/singleProduct/ProductDetail";
 import Collections from "./pages/product/Collection/Collections";
+import MyCart from "./pages/cart/my-cart";
 
 const App = () => {
   return (
@@ -18,32 +19,20 @@ const App = () => {
       <BrowserRouter>
         <Navbar />
         <Routes>
-  <Route path="/" element={<Home />} />
-  <Route path="/register" element={<Register />} />
-  <Route path="/login" element={<Login />} />
-  <Route path="/forgot-password" element={<ForgotPassword />} />
-  <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-  {/* Men collection routes */}
-  {/* <Route path="/:collection" element={<ProductFilters/>} />
-  <Route path="/:collection/:brand" element={<ProductFilters/>} /> */}
+          {/* Other routes */}
+          <Route path="/:collection" element={<ProductFilters />} />
+          <Route path="/:collection/:brand" element={<ProductFilters />} />
 
-  {/* Women collection routes */}
-  {/* <Route path="/:collection" element={<ProductFilters />} /> */}
-  {/* <Route path="/collection/:brand" element={<ProductFilters />} /> */}
-
-  {/* Other routes */}
-  <Route path="/:collection" element={<ProductFilters />} />
-  <Route path="/:collection/:brand" element={<ProductFilters />} />
-
-
-  <Route path="/:collection/:brand/:id" element={<ProductDetail />} />
-  <Route path="/collection" element={<Collections />} />
-
-  
-
-</Routes>
-
+          <Route path="/:collection/:brand/:id" element={<ProductDetail />} />
+          <Route path="/collection" element={<Collections />} />
+          <Route path="/my-cart" element={<MyCart />} />
+        </Routes>
       </BrowserRouter>
     </Provider>
   );

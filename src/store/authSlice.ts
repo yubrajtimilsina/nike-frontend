@@ -54,12 +54,10 @@ const authSlice = createSlice({
         email: null,
         password: null,
         token: null,
-
       };
       state.status = Status.LOADING;
 
       localStorage.removeItem("tokenauth");
-
     },
   },
 });
@@ -90,10 +88,12 @@ export function loginUser(data: ILoginUser) {
       if (response.status === 201) {
         dispatch(setStatus(Status.SUCCESS));
         console.log("res", response.data);
-        if (response.data.token) {
-          localStorage.setItem("tokenauth", response.data.token);
+        const token =
+          response.data.token || response.data.session?.access_token;
 
-          dispatch(setToken(response.data.token));
+        if (token) {
+          localStorage.setItem("tokenauth", token);
+          dispatch(setToken(token));
         } else {
           dispatch(setStatus(Status.ERROR));
         }
@@ -138,4 +138,3 @@ export function resetPassword(data: IResetPassword) {
     }
   };
 }
-
