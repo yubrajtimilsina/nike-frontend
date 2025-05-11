@@ -18,11 +18,14 @@ export default function Header() {
 
     setIsLogin(loggedIn);
 
-    if (loggedIn && data.length > 0) {
-      dispatch(fetchCartItems()); // Only dispatch when logged in
-    }
   }, [reduxToken, dispatch]); // Only depend on reduxToken and dispatch
 
+
+  const handleCartClick = () => {
+    if (isLogin) {
+      dispatch(fetchCartItems()); // Fetch cart items before navigating
+    }
+  };
   const handleLogout = () => {
     localStorage.removeItem("tokenauth");
     setIsLogin(false);
@@ -97,7 +100,7 @@ export default function Header() {
             </button>
 
             <div className="relative">
-              <Link to={"/my-cart"}>
+              <Link to="/my-cart" onClick={handleCartClick}>
                 <button className="p-2 rounded-full hover:bg-gray-100">
                   <svg
                     className="h-6 w-6"

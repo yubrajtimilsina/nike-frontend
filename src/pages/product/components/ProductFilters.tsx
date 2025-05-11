@@ -18,7 +18,7 @@ const ProductFilters = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    setActiveBrand(brand || "All");
+  setActiveBrand(brand || "All");
   }, [brand]);
 
   const brands = ["All", ...new Set(products.map((product) => product.brand))];

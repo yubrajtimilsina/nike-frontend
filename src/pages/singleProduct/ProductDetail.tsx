@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchProduct } from "../../store/productSlice";
-import Review from "./Review";
+// import Review from "./Review";
 import { fetchReview } from "../../store/reviewSlice";
 import { addToCart } from "../../store/cartSlice";
 
@@ -10,10 +10,11 @@ const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const { product } = useAppSelector((state) => state.products);
-
-  const { review, status } = useAppSelector((state) => state.reviews);
+const isLoggedIn = useAppSelector((store) => !!store.auth.user.token || !!localStorage.getItem('tokenauth'));
+  // const { review, status } = useAppSelector((state) => state.reviews);
   const [selectedSize, setSelectedSize] = useState(null);
 const sizes = ["US 7", "US 8", "US 9", "US 10", "US 11", "US 12"];
+const navigate=useNavigate()
 
   useEffect(() => {
     if (id) {
@@ -24,11 +25,20 @@ const sizes = ["US 7", "US 8", "US 9", "US 10", "US 11", "US 12"];
 
   
 const handleAddToCart = () => {
-  if (product?.id && selectedSize) {
+  if(isLoggedIn){
+    if (product?.id && selectedSize) {
     dispatch(addToCart(product.id, selectedSize));
   } else {
     alert("Please select a size before adding to cart.");
   }
+  }
+  else{
+    alert('login for add to cart')
+    navigate('/login')
+
+  }
+  
+  
 };
 
 
@@ -214,7 +224,7 @@ const handleAddToCart = () => {
             </div>
           </div>
         </div>
-        <section>
+        {/* <section>
           {status === "loading" ? (
             <div className="text-center py-12">
               <svg
@@ -250,7 +260,7 @@ const handleAddToCart = () => {
           ) : (
             <p className="text-center text-gray-600">No reviews available.</p>
           )}
-        </section>
+        </section> */}
       </section>
     </>
   );

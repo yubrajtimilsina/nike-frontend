@@ -32,7 +32,6 @@ export interface IProduct {
   Category: ICategory;
 
   brand: string;
-  sizes: string[];
   quantity: number;
   comments: string[];
   rating: number;

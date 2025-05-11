@@ -1,7 +1,6 @@
 import Footer from "../../globals/components/Footer";
 import Categories from "../cartegory/Categories";
 import Features from "../features/Features";
-import ProductCard from "../product/components/ProductCard";
 import ProductFilters from "../product/components/ProductFilters";
 import PromoBanners from "../promoBanner/PromoBanner";
 

@@ -1,10 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { deleteCart, updateCart } from "../../store/cartSlice";
+import { deleteCart, fetchCartItems, updateCart } from "../../store/cartSlice";
+import { useEffect } from "react";
 
 function MyCart() {
+
+
   const { data } = useAppSelector((store) => store.cart);
   const dispatch = useAppDispatch();
+  const navigate=useNavigate()
+const isLoggedIn = useAppSelector((store) => !!store.auth.user.token || !!localStorage.getItem('tokenauth')); // Added for auth check
+  useEffect(()=>{
+    if(isLoggedIn)
+    fetchCartItems()
+  else
+  navigate('/login')
+  },)
   const handleUpdate = (productId: string, quantity: number) => {
     dispatch(updateCart(productId, quantity));
   };
@@ -13,7 +24,7 @@ function MyCart() {
   };
   const subTotal = Array.isArray(data)
     ? data.reduce(
-        (total, item) => total + item.product?.price * item.quantity,
+        (total, item) => total + (item?.product?.price)* item.quantity,
         0
       )
     : 0;
@@ -84,19 +95,19 @@ function MyCart() {
                                 </span>
                                 <button
                                   className="border rounded-md py-2 px-4 ml-2"
-                                //   onClick={() =>
-                                //     handleUpdate(
-                                //       item.product.id,
-                                //       item.quantity + 1
-                                //     )
-                                //   }
+                                  onClick={() =>
+                                    handleUpdate(
+                                      item.product.id,
+                                      item.quantity + 1
+                                    )
+                                  }
                                 >
                                   +
                                 </button>
                               </div>
                             </td>
                             <td className="py-4">
-                              {item.product.price * item?.quantity}
+                              { }
                             </td>
                             <td className="py-4">
                               <div className="flex items-center">

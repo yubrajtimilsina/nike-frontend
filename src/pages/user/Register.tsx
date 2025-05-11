@@ -27,11 +27,10 @@ const Register = () => {
     if (status === Status.SUCCESS) {
       navigate("/login");
       dispatch(setStatus(Status.LOADING));
-    } else if (status === Status.ERROR) {
-      console.error("Registration failed");
-      alert("Registration failed");
+      return
+    } 
       dispatch(setStatus(Status.ERROR));
-    }
+    
   }, [status, dispatch, navigate]);
 
   return (

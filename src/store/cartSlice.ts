@@ -7,7 +7,7 @@ import { APIS } from "../globals/http";
 interface ICartItem{
   id:string
   name:string,
-  image:string,
+  images:string,
   price:string,
 
 }
@@ -17,6 +17,7 @@ interface IData {
   userId: string;
   quantity: number;
   product: ICartItem;
+  sizes:number
 }
 interface ICartUpdateItem {
   productId: string;
@@ -51,7 +52,7 @@ const cartSlice = createSlice({
     },
     setDeleteCartItem(state: IInitialData, action: PayloadAction<string>) {
       const index = state.data.findIndex((i) => i.product.id == action.payload);
-      if (index !== -1) {
+    if (index !== -1) {
         state.data.splice(index, 1);
       }
     },
@@ -62,7 +63,7 @@ export const { setCart, setStatus, setUpdateCart, setDeleteCartItem } =
   cartSlice.actions;
 export default cartSlice.reducer;
 
-export function addToCart(productId: string,sizes:string) {
+export function addToCart(productId: string,sizes:number) {
   return async function addToCartThunk(dispatch: AppDispatch) {
     try {
       const res = await APIS.post("/cart", {
