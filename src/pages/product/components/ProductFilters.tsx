@@ -33,7 +33,7 @@ const ProductFilters = () => {
   
     return matchBrand && matchCollection;
   });
-  console.log(collection)
+  
   
   const handleBrandClick = (selectedBrand: string) => {
     if (selectedBrand === "All") navigate(`/${collection}`);

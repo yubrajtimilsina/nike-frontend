@@ -1,4 +1,5 @@
 import Footer from "../../globals/components/Footer";
+import Navbar from "../../globals/components/Navbar";
 import Categories from "../cartegory/Categories";
 import Features from "../features/Features";
 import ProductFilters from "../product/components/ProductFilters";
@@ -7,6 +8,8 @@ import PromoBanners from "../promoBanner/PromoBanner";
 // components/Hero.jsx
 export default function Hero() {
   return (
+    <>
+    <Navbar />
     <section className="relative bg-gray-100 py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center">  
@@ -40,7 +43,7 @@ export default function Hero() {
       </div>
     </section>
 
-
+</>
 
 
     

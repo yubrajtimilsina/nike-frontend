@@ -30,6 +30,7 @@ export interface IProduct {
   updatedAt: string;
   categoryId: string;
   Category: ICategory;
+  sizes:string[]
 
   brand: string;
   quantity: number;

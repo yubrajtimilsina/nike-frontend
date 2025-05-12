@@ -4,28 +4,41 @@ import { useDispatch } from "react-redux";
 import { logout } from "../../store/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchCartItems } from "../../store/cartSlice";
+import toast from "react-hot-toast";
 
-export default function Header() {
+export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const reduxToken = useAppSelector((store) => store.auth.user.token);
   const { data } = useAppSelector((store) => store.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
     const localToken = localStorage.getItem("tokenauth");
     const loggedIn = !!reduxToken || !!localToken;
-
     setIsLogin(loggedIn);
+  }, [reduxToken]); // ✅ Fixed: Removed dispatch
 
-  }, [reduxToken, dispatch]); // Only depend on reduxToken and dispatch
-
-
-  const handleCartClick = () => {
+  const handleCartClick = (e) => {
     if (isLogin) {
-      dispatch(fetchCartItems()); // Fetch cart items before navigating
+      if (data.length > 0) dispatch(fetchCartItems());
+      navigate("/my-cart");
+    } else {
+      e.preventDefault();
+      toast.error("No items in the cart", {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#dc2626",
+          color: "#ffffff",
+          padding: "12px 16px",
+          borderRadius: "8px",
+        },
+      });
     }
   };
+
   const handleLogout = () => {
     localStorage.removeItem("tokenauth");
     setIsLogin(false);
@@ -42,7 +55,6 @@ export default function Header() {
             Nike
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8 items-center">
             <Link to="/" className="font-medium hover:text-indigo-600">
               Home
@@ -101,6 +113,8 @@ export default function Header() {
 
             <div className="relative">
               <Link to="/my-cart" onClick={handleCartClick}>
+                {/* <Link to="/my-cart" > */}
+
                 <button className="p-2 rounded-full hover:bg-gray-100">
                   <svg
                     className="h-6 w-6"
@@ -174,7 +188,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4">
             <nav className="flex flex-col space-y-3">
