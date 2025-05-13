@@ -3,12 +3,13 @@ import { AppDispatch } from "./store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/types";
 import { APIS } from "../globals/http";
+import { data } from "react-router-dom";
 
 interface ICartItem {
   id: string;
   name: string;
-  images: string[];
-  price: string;
+  images: string;
+  price: number;
 }
 
 interface IData {
@@ -16,7 +17,7 @@ interface IData {
   productId: string;
   userId: string;
   quantity: number;
-  product: ICartItem;
+  Shoe: ICartItem;
   size: string;
   color: string; // Added color
 }
@@ -24,8 +25,6 @@ interface IData {
 interface ICartUpdateItem {
   productId: string;
   quantity: number;
-  size: string;
-  color: string; // Added color
 }
 
 interface IInitialData {
@@ -50,10 +49,7 @@ const cartSlice = createSlice({
     },
     setUpdateCart(state: IInitialData, action: PayloadAction<ICartUpdateItem>) {
       const index = state.data.findIndex(
-        (i) =>
-          i.product.id === action.payload.productId &&
-          i.size === action.payload.size &&
-          i.color === action.payload.color
+        (item) => item.Shoe.id === action.payload.productId
       );
       if (index !== -1) {
         state.data[index].quantity = action.payload.quantity;
@@ -61,11 +57,10 @@ const cartSlice = createSlice({
     },
     setDeleteCartItem(
       state: IInitialData,
-      action: PayloadAction<{ productId: string}>
+      action: PayloadAction<{ productId: string }>
     ) {
       const index = state.data.findIndex(
-        (i) =>
-          i.product.id === action.payload.productId 
+        (i) => i.productId === action.payload.productId
       );
       if (index !== -1) {
         state.data.splice(index, 1);
@@ -74,7 +69,8 @@ const cartSlice = createSlice({
   },
 });
 
-export const { setCart, setStatus, setUpdateCart, setDeleteCartItem } = cartSlice.actions;
+export const { setCart, setStatus, setUpdateCart, setDeleteCartItem } =
+  cartSlice.actions;
 export default cartSlice.reducer;
 
 export function addToCart(productId: string, size: string, color: string) {
@@ -118,13 +114,13 @@ export function fetchCartItems() {
   };
 }
 
-export function updateCart(productId: string, quantity: number, size: string, color: string) {
+export function updateCart(productId: string, quantity: number) {
   return async function updateCartThunk(dispatch: AppDispatch) {
     try {
-      const res = await APIS.patch("/cart", { productId, quantity, size, color });
+      const res = await APIS.patch("/cart/"+ productId, {  quantity });
       if (res.status === 201) {
         dispatch(setStatus(Status.SUCCESS));
-        dispatch(setUpdateCart({ productId, quantity, size, color }));
+        dispatch(setUpdateCart({ productId, quantity }));
       } else {
         dispatch(setStatus(Status.ERROR));
       }
@@ -141,7 +137,7 @@ export function deleteCart(productId: string) {
       const res = await APIS.delete("/cart/" + productId);
       if (res.status === 201) {
         dispatch(setStatus(Status.SUCCESS));
-        dispatch(setDeleteCartItem(productId));
+        dispatch(setDeleteCartItem({ productId }));
       } else {
         dispatch(setStatus(Status.ERROR));
       }

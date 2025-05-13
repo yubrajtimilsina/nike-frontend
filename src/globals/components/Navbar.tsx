@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import { useAppSelector } from "../../store/hooks";
-import { useDispatch } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { logout } from "../../store/authSlice";
-import { Link, useNavigate } from "react-router-dom";
+import {  Link, useNavigate } from "react-router-dom";
 import { fetchCartItems } from "../../store/cartSlice";
 import toast from "react-hot-toast";
 
 export default function Navbar() {
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const reduxToken = useAppSelector((store) => store.auth.user.token);
-  const { data } = useAppSelector((store) => store.cart);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch=useAppDispatch()
+
+  const {data}=useAppSelector((store)=>store.cart)
+  
 
   useEffect(() => {
     const localToken = localStorage.getItem("tokenauth");
@@ -21,9 +23,8 @@ export default function Navbar() {
   }, [reduxToken]); // ✅ Fixed: Removed dispatch
 
   const handleCartClick = (e) => {
-    if (isLogin) {
-      if (data.length > 0) dispatch(fetchCartItems());
-      navigate("/my-cart");
+    if (isLogin && data.length>0) {
+       dispatch(fetchCartItems());
     } else {
       e.preventDefault();
       toast.error("No items in the cart", {

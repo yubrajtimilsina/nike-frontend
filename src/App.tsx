@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Register from "./pages/user/Register";
@@ -7,7 +6,7 @@ import ForgotPassword from "./pages/user/ForgotPassword";
 import ResetPassword from "./pages/user/ResetPassword";
 import { Provider } from "react-redux";
 import store from "./store/store";
-// import Navbar from "./globals/components/Navbar";    
+import Navbar from "./globals/components/Navbar";
 import Home from "./pages/Home/Home";
 import ProductFilters from "./pages/product/components/ProductFilters";
 import ProductDetail from "./pages/singleProduct/ProductDetail";
@@ -17,7 +16,10 @@ import MyCart from "./pages/cart/MyCart";
 const App = () => {
   return (
     <Provider store={store}>
+
       <BrowserRouter>
+            <Navbar />
+
         <Toaster />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -30,9 +32,7 @@ const App = () => {
           <Route path="/:collection/:brand" element={<ProductFilters />} />
           <Route path="/:collection/:brand/:id" element={<ProductDetail />} />
           <Route path="/collection" element={<Collections />} />
-                    <Route path="/my-cart" element={<MyCart />} />
-
-
+          <Route path="/my-cart" element={<MyCart />} />
         </Routes>
       </BrowserRouter>
     </Provider>

@@ -27,12 +27,12 @@ const ProductCard: React.FC<ICardProps> = ({ product }) => {
         </div>
 
         {/* Product Image */}
-        <div className="h-64 overflow-hidden">
+        <div className="h-full w-full overflow-hidden object-cover ">
           <img
   src={
     product?.images?.[0]?.includes("cloudinary.com")
       ? product?.images[0]
-      : `http://localhost:5001/${product?.images[0]}`
+      : `http://localhost:5001/${product?.images}`
   }
   alt={product?.name}
   className="w-full h-auto rounded"
