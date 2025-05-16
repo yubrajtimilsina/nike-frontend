@@ -12,6 +12,7 @@ import ProductFilters from "./pages/product/components/ProductFilters";
 import ProductDetail from "./pages/singleProduct/ProductDetail";
 import Collections from "./pages/product/Collection/Collections";
 import MyCart from "./pages/cart/MyCart";
+import Checkout from "./pages/checkout/Checkout";
 
 const App = () => {
   return (
@@ -33,6 +34,10 @@ const App = () => {
           <Route path="/:collection/:brand/:id" element={<ProductDetail />} />
           <Route path="/collection" element={<Collections />} />
           <Route path="/my-cart" element={<MyCart />} />
+                    <Route path="/checkout" element={<Checkout />} />
+
+
+
         </Routes>
       </BrowserRouter>
     </Provider>
