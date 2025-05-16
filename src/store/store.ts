@@ -10,7 +10,7 @@ const store = configureStore({
 
         products:productSlice,
         reviews:reviewSlice,
-        cart:cartSlice
+        cart:cartSlice,
         orders:orderSlice
     }
 })

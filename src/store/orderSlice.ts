@@ -58,7 +58,7 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     setItems(state:IOrder, action:PayloadAction<IOrderItems[]>){
-        state.items=action.payload
+        state.items=action.payload  
     },
     setOrderDetails(state: IOrder, action: PayloadAction<IOrderDetail[]>) {
             state.orderDetails = action.payload
@@ -121,7 +121,7 @@ export function fetchMyOrders() {
     return async function fetchMyOrdersThunk(dispatch: AppDispatch) {
         try {
             const response = await APIS.get("/order")
-            if (response.status === 200) {
+            if (response.status === 201) {
                 dispatch(setStatus(Status.SUCCESS))
                 dispatch(setItems(response.data.data))
             } else {
@@ -139,7 +139,7 @@ export function fetchMyOrderDetails(id: string) {
     return async function fetchMyOrderDetailsThunk(dispatch: AppDispatch) {
         try {
             const response = await APIS.get("/order/" + id)
-            if (response.status === 200) {
+            if (response.status === 201) {
                 dispatch(setStatus(Status.SUCCESS))
                 dispatch(setOrderDetails(response.data.data))
             } else {

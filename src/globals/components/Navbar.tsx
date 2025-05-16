@@ -72,8 +72,8 @@ export default function Navbar() {
             >
               Collections
             </Link>
-            <Link to="/contact" className="font-medium hover:text-indigo-600">
-              Contact
+            <Link to="/my-order" className="font-medium hover:text-indigo-600">
+              My Orders
             </Link>
 
             <div className="ml-4">
