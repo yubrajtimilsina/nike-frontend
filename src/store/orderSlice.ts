@@ -1,14 +1,14 @@
+import { IOrderDetail, OrderStatus } from '../pages/order/types';
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/types";
-import { IOrderDetail, OrderStatus } from "../pages/my-order-detaills/types";
 import { APIS } from "../globals/http";
 import { AppDispatch } from "./store";
 
 interface IProduct {
   productId: string;
-  productQty: number;
+  quantity: number;
   orderStatus?: string;
-  totalAmount?: number;
+  totalPrice?: number;
   Payment?: {
     paymentMethod: PaymentMethod;
   };
@@ -76,7 +76,7 @@ const orderSlice = createSlice({
             // const data =  state.orderDetails.map((order)=>order.orderId == orderId ? {...order, [order.Order.orderStatus] : OrderStatus.Cancelled} : order)
             const datas = state.orderDetails.find((order) => order.orderId === orderId)
             if (datas && datas.orders) {
-                datas.orders.orderStatus = OrderStatus.Cancelled;
+                datas.orders.status = OrderStatus.Cancelled;
             }
             // state.orderDetails = data
 
@@ -99,7 +99,7 @@ export function orderItem(data: IData) {
     return async function orderItemThunk(dispatch: AppDispatch) {
         try {
             const response = await APIS.post("/order", data)
-            if (response.status === 200) {
+            if (response.status === 201) {
                 dispatch(setStatus(Status.SUCCESS))
                 dispatch(setItems(response.data.data))
                 console.log(response.data.url, "URL")
@@ -138,8 +138,8 @@ export function fetchMyOrders() {
 export function fetchMyOrderDetails(id: string) {
     return async function fetchMyOrderDetailsThunk(dispatch: AppDispatch) {
         try {
-            const response = await APIS.get("/order/" + id)
-            if (response.status === 201) {
+            const response = await APIS.get(`/order/${id}`)
+            if (response.status === 200) {
                 dispatch(setStatus(Status.SUCCESS))
                 dispatch(setOrderDetails(response.data.data))
             } else {

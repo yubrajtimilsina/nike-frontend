@@ -13,10 +13,11 @@ import ProductDetail from "./pages/singleProduct/ProductDetail";
 import Collections from "./pages/product/Collection/Collections";
 import MyCart from "./pages/cart/MyCart";
 import Checkout from "./pages/checkout/Checkout";
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 import MyOrder from "./pages/order/MyOrders";
+import MyOrderDetails from "./pages/order/MyOrderDetaills";
 
-export const socket = io("http://localhost5001", {
+export const socket = io("http://localhost:5001", {
   auth: {
     token: localStorage.getItem("tokenauth"),
   },
@@ -42,6 +43,7 @@ const App = () => {
           <Route path="/my-cart" element={<MyCart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/my-orders" element={<MyOrder />} />
+          <Route path="/my-orders/:id" element={<MyOrderDetails />} />
         </Routes>
       </BrowserRouter>
     </Provider>

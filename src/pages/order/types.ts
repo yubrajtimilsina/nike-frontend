@@ -24,7 +24,7 @@ export interface IOrderDetail {
   orderId: string;
   productId: string;
 
-  orders: {
+  Order: {
     firstName: string;
     lastName: string;
     phoneNumber: string;
@@ -33,20 +33,21 @@ export interface IOrderDetail {
     street: string;
     zipcode: string;
     status: OrderStatus;
-    email: string;
     totalPrice: number;
+    state:string,
+    userId:string
 
-    payments: {
+    Payment: {
       paymentMethod: PaymentMethod;
       paymentStatus: PaymentStatus;
     };
   };
 
-  shoes: {
+  Shoes: {
     images: string;
     name: string;
     price: number;
-    categories: {
+    Category: {
       categoryName: string;
     };
   };

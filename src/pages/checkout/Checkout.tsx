@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { IData, orderItem, PaymentMethod } from "../../store/orderSlice";
+import toast, { Toaster } from "react-hot-toast";
 
 function Checkout() {
   const dispatch = useAppDispatch();
@@ -63,6 +64,17 @@ function Checkout() {
     };
 
     await dispatch(orderItem(finalData));
+       toast.error("Order created successfully", {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#dc2626",
+          color: "green",
+          padding: "12px 16px",
+          borderRadius: "8px",
+        },
+      });
+    
   };
 
   return (

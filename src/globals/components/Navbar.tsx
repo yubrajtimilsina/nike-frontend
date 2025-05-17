@@ -72,7 +72,7 @@ export default function Navbar() {
             >
               Collections
             </Link>
-            <Link to="/my-order" className="font-medium hover:text-indigo-600">
+            <Link to="/my-orders" className="font-medium hover:text-indigo-600">
               My Orders
             </Link>
 

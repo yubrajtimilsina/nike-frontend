@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import Navbar from "../../globals/components/Navbar"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { Link } from "react-router-dom"
 import { socket } from "../../App"
@@ -12,20 +11,19 @@ function MyOrder(){
     const [searchTerm,setSearchTerm] = useState<string>("")
     console.log(searchTerm)
 
-    const newItems = items.filter((item)=>item.id.toLowerCase().includes(searchTerm) || item.orderStatus?.toLowerCase().includes(searchTerm) || item.Payment?.paymentMethod.toLowerCase().includes(searchTerm) || item.totalAmount == parseInt(searchTerm))
+    const newItems = items.filter((item)=>item.id.toLowerCase().includes(searchTerm) || item.orderStatus?.toLowerCase().includes(searchTerm) || item.Payment?.paymentMethod.toLowerCase().includes(searchTerm) || item.totalPrice == parseInt(searchTerm))
     console.log(newItems)
     useEffect(()=>{
-        dispatch(fetchMyOrders ())
+        dispatch(fetchMyOrders())
     },[])
     useEffect(()=>{
       socket.on("statusUpdated",(data:any)=>{
         console.log(data,"Incoming data")
         dispatch(updateOrderStatusinSlice(data))
       })
-    },[dispatch, socket])
+    },[socket])
     return (
         <>
-        <Navbar />
 <div>
   <div className="w-full flex justify-between items-center mb-3 mt-1 pl-3">
     <div>
@@ -70,7 +68,7 @@ function MyOrder(){
                   <p className="block font-semibold text-sm text-slate-800">{item.orderStatus}</p>
                 </td>
                 <td className="p-4 border-b border-slate-200 py-5">
-                  <p className="text-sm text-slate-500">{item.totalAmount}</p>
+                  <p className="text-sm text-slate-500">{item.totalPrice}</p>
                 </td>
                 <td className="p-4 border-b border-slate-200 py-5">
                   <p className="text-sm text-slate-500">{item.Payment?.paymentMethod}</p>
