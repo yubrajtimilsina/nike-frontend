@@ -1,4 +1,4 @@
-import { IOrderDetail, OrderStatus } from '../pages/order/types';
+import { IOrderDetail, OrderStatus, PaymentStatus } from '../pages/order/types';
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/types";
 import { APIS } from "../globals/http";
@@ -7,10 +7,11 @@ import { AppDispatch } from "./store";
 interface IProduct {
   productId: string;
   quantity: number;
-  orderStatus?: string;
   totalPrice?: number;
+  status:Status
   Payment?: {
     paymentMethod: PaymentMethod;
+    paymentStatus:PaymentStatus;
   };
 }
 export interface IOrderItems extends IProduct {
@@ -42,7 +43,7 @@ export interface IData {
   email: string;
   totalPrice: number;
   paymentMethod: PaymentMethod;
-  Shoes: IProduct[];
+  Shoe: IProduct[];
 }
 
 const initialState:IOrder={
@@ -75,8 +76,8 @@ const orderSlice = createSlice({
             // console.log(state.items,"ST")
             // const data =  state.orderDetails.map((order)=>order.orderId == orderId ? {...order, [order.Order.orderStatus] : OrderStatus.Cancelled} : order)
             const datas = state.orderDetails.find((order) => order.orderId === orderId)
-            if (datas && datas.orders) {
-                datas.orders.status = OrderStatus.Cancelled;
+            if (datas && datas.Order) {
+                datas.Order.status = OrderStatus.Cancelled;
             }
             // state.orderDetails = data
 

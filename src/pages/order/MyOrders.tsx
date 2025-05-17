@@ -11,7 +11,7 @@ function MyOrder(){
     const [searchTerm,setSearchTerm] = useState<string>("")
     console.log(searchTerm)
 
-    const newItems = items.filter((item)=>item.id.toLowerCase().includes(searchTerm) || item.orderStatus?.toLowerCase().includes(searchTerm) || item.Payment?.paymentMethod.toLowerCase().includes(searchTerm) || item.totalPrice == parseInt(searchTerm))
+    const newItems = items.filter((item)=>item.id.toLowerCase().includes(searchTerm) || item.status?.toLowerCase().includes(searchTerm) || item.Payment?.paymentMethod.toLowerCase().includes(searchTerm) || item.totalPrice == parseInt(searchTerm))
     console.log(newItems)
     useEffect(()=>{
         dispatch(fetchMyOrders())
@@ -51,6 +51,8 @@ function MyOrder(){
           <th className="p-4 text-sm font-normal leading-none text-slate-500">Order Status</th>
           <th className="p-4 text-sm font-normal leading-none text-slate-500">Total Amount</th>
           <th className="p-4 text-sm font-normal leading-none text-slate-500">Payment Method</th>
+                    <th className="p-4 text-sm font-normal leading-none text-slate-500">Payment Status</th>
+
         </tr>
       </thead>
       <tbody>
@@ -65,7 +67,7 @@ function MyOrder(){
                  
                 </td>
                 <td className="p-4 border-b border-slate-200 py-5">
-                  <p className="block font-semibold text-sm text-slate-800">{item.orderStatus}</p>
+                  <p className="block font-semibold text-sm text-slate-800">{item.status}</p>
                 </td>
                 <td className="p-4 border-b border-slate-200 py-5">
                   <p className="text-sm text-slate-500">{item.totalPrice}</p>
@@ -73,6 +75,10 @@ function MyOrder(){
                 <td className="p-4 border-b border-slate-200 py-5">
                   <p className="text-sm text-slate-500">{item.Payment?.paymentMethod}</p>
                 </td>
+                 <td className="p-4 border-b border-slate-200 py-5">
+                  <p className="text-sm text-slate-500">{item.Payment?.paymentStatus}</p>
+                </td>
+     
      
                
               </tr>

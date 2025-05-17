@@ -43,7 +43,7 @@ export interface IOrderDetail {
     };
   };
 
-  Shoes: {
+  Shoe: {
     images: string;
     name: string;
     price: number;
