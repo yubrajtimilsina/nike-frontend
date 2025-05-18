@@ -4,6 +4,10 @@ import productSlice from "./productSlice";
 import reviewSlice from "./reviewSlice";
 import cartSlice from './cartSlice'
 import orderSlice from './orderSlice'
+import adminCategorySlice from "./adminCategorySlice";
+import adminUserSlice from "./adminUserSlice";
+import adminProductSlice from "./adminProductSlice";
+import adminOrderSlice from "./adminOrderSlice";
 const store = configureStore({
     reducer : {
         auth : authSlice,
@@ -11,7 +15,11 @@ const store = configureStore({
         products:productSlice,
         reviews:reviewSlice,
         cart:cartSlice,
-        orders:orderSlice
+        orders:orderSlice,
+         categories : adminCategorySlice, 
+        users : adminUserSlice, 
+        adminProducts : adminProductSlice,
+        adminOrders : adminOrderSlice,
     }
 })
 

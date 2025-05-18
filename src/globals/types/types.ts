@@ -4,12 +4,12 @@ export enum Status {
   ERROR = "error",
 }
 
-interface ICategory {
+export interface ICategory {
   id: string;
   categoryName: string;
 }
 
-interface ICollection{
+ export interface ICollection{
   id:string;
   collectionName:string;  // men amd women
 }
@@ -25,7 +25,7 @@ export interface IProduct {
   features: string[];
   discount: number;
   colors: string[];
-  images: string;
+  images: string |File;
   createdAt: string;
   updatedAt: string;
   categoryId: string;
