@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import AdminLayout from "../AdminLayout";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { fetchProducts } from "../../../store/adminProductSlice";
-import ProductTable from "./components/PoductTable";
+import ProductModal from "./components/ProductModal";
 
 
 function AdminProduct(){
@@ -14,7 +14,7 @@ function AdminProduct(){
     return(
 
         <AdminLayout>
-            <ProductTable products={products} />
+            <ProductModal products={products} />
         </AdminLayout>
     )
 }

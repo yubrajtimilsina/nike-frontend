@@ -2,10 +2,9 @@ import { useCallback, useState } from "react";
 // Remove this import to avoid self-import conflict
 // import ProductModal from "./ProductModal"
 import { Link } from "react-router-dom";
-import ProductModal from "./PoductTable";
-import { IProduct } from "../../../../globals/types/types";
+import ProductTable, { IProduct } from "./PoductTable";
 
-function ProductTable({ products }: { products: IProduct[] }) {
+function ProductModal({ products }: { products: IProduct[] }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = useCallback(() => setIsModalOpen(true), []);
   const closeModal = useCallback(() => setIsModalOpen(false), []);
@@ -13,7 +12,7 @@ function ProductTable({ products }: { products: IProduct[] }) {
     <div className="flex flex-col">
       {/* Make sure to import the correct ProductModal from the actual modal file, e.g., ProductModalDialog */}
       {/* {isModalOpen && <ProductModalDialog closeModal={closeModal} />} */}
-      {isModalOpen && <ProductModal closeModal={closeModal} />}
+      {isModalOpen && <ProductTable closeModal={closeModal} />}
       <div className="min-w-full inline-block align-middle">
         <div className="relative  text-gray-500 focus-within:text-gray-900 mb-4">
           <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none ">
@@ -172,4 +171,4 @@ function ProductTable({ products }: { products: IProduct[] }) {
   );
 }
 
-export default ProductTable;
+export default ProductModal;

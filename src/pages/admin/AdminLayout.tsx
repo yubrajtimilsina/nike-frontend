@@ -9,7 +9,7 @@ function AdminLayout({children}:Readonly<{children : React.ReactNode}>){
   {/* sidebar */}
   <div className="hidden md:flex flex-col w-64 bg-gray-800">
     <div className="flex items-center justify-center h-16 bg-gray-900">
-      <span className="text-white font-bold uppercase">Digital Dokaan Dashboard</span>
+      <span className="text-white font-bold uppercase">Nike stores</span>
     </div>
  <Sidebar />
   </div>
