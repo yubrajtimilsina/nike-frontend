@@ -31,7 +31,7 @@ export const socket = io("http://localhost:5001", {
 });
 const App = () => {
   return (
-    <Provider store={store}>
+    <Provider store={store}>  
       <BrowserRouter>
         <Navbar />
 

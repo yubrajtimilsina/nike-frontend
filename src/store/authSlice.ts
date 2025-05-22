@@ -17,6 +17,7 @@ interface ILoginUser {
 }
 
 export interface IUser {
+  id:string|null,
   username: string | null;
   email: string | null;
   password: string | null;
@@ -28,6 +29,7 @@ export interface IAuthState {
 }
 const initialState: IAuthState = {
   user: {
+    id:null,
     username: null,
     email: null,
     password: null,
@@ -50,6 +52,7 @@ const authSlice = createSlice({
     },
     logout(state: IAuthState) {
       state.user = {
+        id:null,
         username: null,
         email: null,
         password: null,

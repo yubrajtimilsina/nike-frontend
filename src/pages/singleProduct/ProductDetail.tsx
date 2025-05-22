@@ -5,11 +5,16 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchProduct } from "../../store/productSlice";
 // import { fetchReview } from "../../store/reviewSlice";
 import { addToCart } from "../../store/cartSlice";
+import Review from "./Review";
+import { fetchReview } from "../../store/reviewSlice";
+import store from "../../store/store";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
-  const { product } = useAppSelector((state) => state.products);
+  const { product } = useAppSelector((store) => store.products);
+  const { review } = useAppSelector((store) => store.reviews);
+
   const isLoggedIn = useAppSelector(
     (store) => !!store.auth.user.token || !!localStorage.getItem("tokenauth")
   );
@@ -19,7 +24,8 @@ const ProductDetail = () => {
   useEffect(() => {
     if (id) {
       dispatch(fetchProduct(id));
-      // dispatch(fetchReview());
+
+      dispatch(fetchReview(id));
     }
   }, [id, dispatch]);
 
@@ -47,7 +53,7 @@ const ProductDetail = () => {
     product && (product.colors ?? []).length > 0
       ? product.colors
       : ["No colors available"];
-console.log(product?.images)
+  console.log(product?.images);
 
   return (
     <>
@@ -211,6 +217,9 @@ console.log(product?.images)
             </div>
           </div>
         </div>
+      </section>
+      <section>
+        <Review key={product?.id} review={review} />
       </section>
     </>
   );
