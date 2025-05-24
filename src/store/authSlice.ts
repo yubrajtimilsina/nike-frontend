@@ -17,7 +17,7 @@ interface ILoginUser {
 }
 
 export interface IUser {
-  id:string|null,
+  id: string | null;
   username: string | null;
   email: string | null;
   password: string | null;
@@ -29,7 +29,7 @@ export interface IAuthState {
 }
 const initialState: IAuthState = {
   user: {
-    id:null,
+    id: null,
     username: null,
     email: null,
     password: null,
@@ -52,7 +52,7 @@ const authSlice = createSlice({
     },
     logout(state: IAuthState) {
       state.user = {
-        id:null,
+        id: null,
         username: null,
         email: null,
         password: null,
@@ -89,14 +89,14 @@ export function loginUser(data: ILoginUser) {
     try {
       const response = await API.post("/auth/login", data);
       if (response.status === 201) {
+        const { id, username, email } = response.data;
         dispatch(setStatus(Status.SUCCESS));
         console.log("res", response.data);
-        const token =
-          response.data.token || response.data.session?.access_token;
+        const token =response.data.token || response.data.session?.access_token;
 
         if (token) {
           localStorage.setItem("tokenauth", token);
-          dispatch(setToken(token));
+          dispatch(setUser({ id, username, email, password: null, token }));
         } else {
           dispatch(setStatus(Status.ERROR));
         }

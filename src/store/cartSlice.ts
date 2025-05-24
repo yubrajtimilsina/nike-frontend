@@ -3,7 +3,6 @@ import { AppDispatch } from "./store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/types";
 import { APIS } from "../globals/http";
-import { data } from "react-router-dom";
 
 interface ICartItem {
   id: string;

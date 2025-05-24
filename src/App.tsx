@@ -31,7 +31,7 @@ export const socket = io("http://localhost:5001", {
 });
 const App = () => {
   return (
-    <Provider store={store}>  
+    <Provider store={store}>
       <BrowserRouter>
         <Navbar />
 
@@ -43,24 +43,24 @@ const App = () => {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           {/* Other routes */}
-          <Route path="/:collection" element={<ProductFilters />} />
-          <Route path="/:collection/:brand" element={<ProductFilters />} />
           <Route path="/:collection/:brand/:id" element={<ProductDetail />} />
+          <Route path="/:collection/:brand" element={<ProductFilters />} />
+          <Route path="/:collection" element={<ProductFilters />} />
+
           <Route path="/collection" element={<Collections />} />
           <Route path="/my-cart" element={<MyCart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/my-orders" element={<MyOrder />} />
           <Route path="/my-orders/:id" element={<MyOrderDetails />} />
-        
+
           {/* admin route */}
           <Route path="/admin" element={<AdminStats />} />
-            <Route path="/admin/categories" element={<AdminCategories />} />
+          <Route path="/admin/categories" element={<AdminCategories />} />
           <Route path="/admin/users" element={<User />} />
           <Route path="/admin/products" element={<AdminProduct />} />
           <Route path="/admin/orders" element={<AdminOrder />} />
           <Route path="/admin/products/:id" element={<ProductDescription />} />
           <Route path="/admin/orders/:id" element={<AdminOrderDetail />} />
-
         </Routes>
       </BrowserRouter>
     </Provider>

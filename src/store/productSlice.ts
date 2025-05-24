@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IProduct, IProducts, Status } from "../globals/types/types";
 import { AppDispatch, RootState } from "./store";
-import axios from "axios";
 import { API } from "../globals/http";
 
 const initialState: IProducts = {
@@ -51,6 +50,7 @@ export function fetchProduct(id: string) {
     dispatch: AppDispatch,
     getState: () => RootState
   ) {
+     dispatch(setStatus(Status.LOADING)); // Set loading state first
     const store = getState();
     const productExits = store.products.products.find(
       (product: IProduct) => product.id === id
@@ -61,8 +61,9 @@ export function fetchProduct(id: string) {
       return;
     }
     try {
-      const res = await axios.get(`/product/${id}`);
-      if (res.status === 201) {
+      
+      const res = await API.get(`/product/${id}`);
+      if (res.status === 200) {
         dispatch(setStatus(Status.SUCCESS));
 
         dispatch(setProduct(res.data.data));

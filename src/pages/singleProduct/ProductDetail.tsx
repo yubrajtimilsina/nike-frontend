@@ -1,19 +1,16 @@
-// src/components/ProductDetail.tsx
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchProduct } from "../../store/productSlice";
-// import { fetchReview } from "../../store/reviewSlice";
 import { addToCart } from "../../store/cartSlice";
 import Review from "./Review";
 import { fetchReview } from "../../store/reviewSlice";
-import store from "../../store/store";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const { product } = useAppSelector((store) => store.products);
-  const { review } = useAppSelector((store) => store.reviews);
+  const { review} = useAppSelector((store) => store.reviews);
 
   const isLoggedIn = useAppSelector(
     (store) => !!store.auth.user.token || !!localStorage.getItem("tokenauth")
@@ -21,18 +18,18 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     if (id) {
-      dispatch(fetchProduct(id));
-
-      dispatch(fetchReview(id));
+      dispatch(fetchProduct(id)).then(() => {
+        dispatch(fetchReview(id));
+      });
     }
   }, [id, dispatch]);
 
   const handleAddToCart = async () => {
     if (!isLoggedIn) {
       alert("Please log in to add to cart");
-      // navigate("/login");
       return;
     }
 
@@ -45,6 +42,12 @@ const ProductDetail = () => {
     }
   };
 
+  // Calculate average rating from reviews
+  const averageRating = review.length > 0 
+    ? review.reduce((sum, r) => sum + (r.rating ?? 0), 0) / review.length
+    : 0;
+  const roundedRating = Math.round(averageRating);
+
   const availableSizes =
     product?.sizes && product.sizes.length > 0
       ? product.sizes
@@ -53,7 +56,6 @@ const ProductDetail = () => {
     product && (product.colors ?? []).length > 0
       ? product.colors
       : ["No colors available"];
-  console.log(product?.images);
 
   return (
     <>
@@ -109,7 +111,7 @@ const ProductDetail = () => {
                     <svg
                       key={i}
                       className={`w-5 h-5 ${
-                        i < Math.floor(product?.rating || 0)
+                        i < roundedRating
                           ? "text-yellow-400"
                           : "text-gray-300"
                       }`}
@@ -121,7 +123,7 @@ const ProductDetail = () => {
                   ))}
                 </div>
                 <span className="text-gray-600 text-sm">
-                  ({product?.comments || 0} reviews)
+                  {averageRating.toFixed(1)} ({review.length} {review.length === 1 ? 'review' : 'reviews'})
                 </span>
               </div>
 
@@ -219,7 +221,7 @@ const ProductDetail = () => {
         </div>
       </section>
       <section>
-        <Review key={product?.id} review={review} />
+        <Review key={product?.id} review={review} productId={product?.id} />
       </section>
     </>
   );

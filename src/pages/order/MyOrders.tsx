@@ -9,7 +9,6 @@ function MyOrder(){
     const dispatch = useAppDispatch()
     const {items} = useAppSelector((store)=>store.orders)
     const [searchTerm,setSearchTerm] = useState<string>("")
-    console.log(searchTerm)
 
     const newItems = items.filter((item)=>item.id.toLowerCase().includes(searchTerm) || item.status?.toLowerCase().includes(searchTerm) || item.Payment?.paymentMethod.toLowerCase().includes(searchTerm) || item.totalPrice == parseInt(searchTerm))
     console.log(newItems)

@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/types";
-import { AppDispatch, RootState } from "./store";
+import { AppDispatch } from "./store";
 import { API, APIS } from "../globals/http";
+
 interface user {
   id: string | null;
   username: string | null;
@@ -35,37 +36,39 @@ const reviewSlice = createSlice({
     setStatus(state: IReview, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
+    // Add these new reducers
+    updateReview(state: IReview, action: PayloadAction<IData>) {
+      state.review = state.review.map((review) =>
+        review.id === action.payload.id ? action.payload : review
+      );
+    },
+    deleteReview(state: IReview, action: PayloadAction<string>) {
+      state.review = state.review.filter(
+        (review) => review.id !== action.payload
+      );
+    },
   },
 });
 
-export const { setReview, setStatus } = reviewSlice.actions;
+export const { setReview, setStatus, updateReview, deleteReview } =
+  reviewSlice.actions;
 export default reviewSlice.reducer;
 
 export function fetchReview(productId: string) {
-  return async function fetchReviewThunk(
-    dispatch: AppDispatch,
-    getState: () => RootState
-  ) {
-    const store = getState();
-    const reviews = store.reviews.review.find(
-      (review: IData) => review.id === productId
-    );
-    if (reviews) {
-      dispatch(setReview([reviews]));
-      dispatch(setStatus(Status.SUCCESS));
-      return;
-    }
+  return async function fetchReviewThunk(dispatch: AppDispatch) {
+    dispatch(setStatus(Status.LOADING)); // Set loading state first
+
     try {
       const res = await API.get(`/review/${productId}`);
-      if (res.status === 200) {
-        dispatch(setStatus(Status.SUCCESS));
 
-        dispatch(setReview(res.data.data));
+      if (res.status === 200) {
+        dispatch(setReview(res.data.data || res.data)); // Handle both response formats
+        dispatch(setStatus(Status.SUCCESS));
       } else {
         dispatch(setStatus(Status.ERROR));
       }
     } catch (error) {
-      console.log(error);
+      console.error("Fetch reviews error:", error);
       dispatch(setStatus(Status.ERROR));
     }
   };
@@ -75,6 +78,7 @@ export function createReview(data: IData) {
   return async function createReviewThunk(dispatch: AppDispatch) {
     try {
       const res = await APIS.post("/review", data);
+
       if (res.status === 200) {
         dispatch(setReview(res.data.data));
         dispatch(setStatus(Status.SUCCESS));
@@ -82,8 +86,48 @@ export function createReview(data: IData) {
         dispatch(setStatus(Status.ERROR));
       }
     } catch (error) {
+      console.error("Create review error:", error);
       dispatch(setStatus(Status.ERROR));
-      console.log(error);
+    }
+  };
+}
+
+// Add these new thunks
+export function editReview(
+  reviewId: string,
+  updatedData: { rating?: number; comment?: string }
+) {
+  return async function editReviewThunk(dispatch: AppDispatch) {
+    dispatch(setStatus(Status.LOADING));
+    try {
+      const res = await APIS.patch(`/review/${reviewId}`, updatedData);
+      if (res.status === 200) {
+        dispatch(updateReview(res.data.data));
+        dispatch(setStatus(Status.SUCCESS));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error) {
+      console.error("Edit review error:", error);
+      dispatch(setStatus(Status.ERROR));
+    }
+  };
+}
+
+export function removeReview(reviewId: string) {
+  return async function removeReviewThunk(dispatch: AppDispatch) {
+    dispatch(setStatus(Status.LOADING));
+    try {
+      const res = await APIS.delete(`/review/${reviewId}`);
+      if (res.status === 200) {
+        dispatch(deleteReview(reviewId));
+        dispatch(setStatus(Status.SUCCESS));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error) {
+      console.error("Delete review error:", error);
+      dispatch(setStatus(Status.ERROR));
     }
   };
 }
