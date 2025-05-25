@@ -32,7 +32,7 @@ export interface IOrderDetail {
     city: string;
     street: string;
     zipcode: string;
-    status: OrderStatus;
+    orderStatus: OrderStatus;
     totalPrice: number;
     state:string,
     userId:string

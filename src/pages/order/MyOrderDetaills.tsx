@@ -36,7 +36,7 @@ function MyOrderDetail() {
             ? new Date(orderDetails[0]?.createdAt).toLocaleDateString()
             : "N/A"}
         </p>
-        <p>Order Status: {orderDetails[0]?.Order?.status || "N/A"}</p>
+        <p>Order Status: {orderDetails[0]?.Order?.orderStatus || "N/A"}</p>
       </div>
       <div className="mt-10 flex flex-col xl:flex-row jusitfy-center items-stretch w-full xl:space-x-8 space-y-4 md:space-y-6 xl:space-y-0">
         <div className="flex flex-col justify-start items-start w-full space-y-4 md:space-y-6 xl:space-y-8">
@@ -163,7 +163,7 @@ function MyOrderDetail() {
                 </div>
               </div>
               <div className="flex w-full justify-center items-center md:justify-start md:items-start">
-                {orderDetails[0]?.Order?.status !== OrderStatus.Cancelled && (
+                {orderDetails[0]?.Order?.orderStatus !== OrderStatus.Cancelled && (
                   <button
                     onClick={cancelOrder}
                     className="mt-6 md:mt-0 dark:border-white dark:hover:bg-gray-900 dark:bg-transparent dark:text-white py-5 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 border border-gray-800 font-medium w-96 2xl:w-full text-base font-medium leading-4 text-gray-800"
