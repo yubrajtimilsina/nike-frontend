@@ -38,6 +38,7 @@ export interface IOrderDetail {
     userId:string
 
     Payment: {
+      id:string
       paymentMethod: PaymentMethod;
       paymentStatus: PaymentStatus;
     };

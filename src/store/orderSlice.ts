@@ -118,12 +118,11 @@ const orderSlice = createSlice({
         item.orderId === orderId
           ? {
               ...item,
-              Payment: item.Payment
-                ? {
-                    paymentMethod: item.Payment.paymentMethod,
-                    paymentStatus: status,
-                  }
-                : undefined,
+              Payment: {
+                ...item.Payment,
+                paymentStatus: status,
+                paymentMethod: item.Payment?.paymentMethod ?? PaymentMethod.Cod, // Ensure paymentMethod is always defined
+              },
             }
           : item
       );
