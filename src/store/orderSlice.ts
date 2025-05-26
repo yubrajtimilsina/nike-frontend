@@ -9,7 +9,7 @@ interface IProduct {
   quantity: number;
   totalPrice?: number;
   orderStatus: Status;
-  paymentId:string
+  paymentId: string;
   Payment?: {
     paymentMethod: PaymentMethod;
     paymentStatus: PaymentStatus;
@@ -158,7 +158,7 @@ export const {
   setOrderDetails,
   updateOrderStatusToCancel,
   updateOrderStatusinSlice,
-  updatePaymentStatusinSlice
+  updatePaymentStatusinSlice,
 } = orderSlice.actions;
 
 export function orderItem(data: IData) {
@@ -170,7 +170,7 @@ export function orderItem(data: IData) {
         dispatch(setItems(response.data.data));
         console.log(response.data.url, "URL");
         if (response.data.url) {
-          setKhaltiUrl(response.data.url);
+          dispatch(setKhaltiUrl(response.data.url));
           window.location.href = response.data.url;
         }
       } else {
