@@ -16,13 +16,6 @@ import Checkout from "./pages/checkout/Checkout";
 import io from "socket.io-client";
 import MyOrder from "./pages/order/MyOrders";
 import MyOrderDetails from "./pages/order/MyOrderDetaills";
-import AdminStats from "./pages/admin/stat/AdminStats";
-import User from "./pages/admin/users/Users";
-import AdminProduct from "./pages/admin/products/Products";
-import AdminOrder from "./pages/admin/orders/AdminOrderTable";
-import ProductDescription from "./pages/admin/productDescription/ProductDescription";
-import AdminOrderDetail from "./pages/admin/order-details/AdminOrderDetails";
-import AdminCategories from "./pages/admin/categories/AdminCategories";
 
 export const socket = io("http://localhost:5001", {
   auth: {
@@ -53,14 +46,6 @@ const App = () => {
           <Route path="/my-orders" element={<MyOrder />} />
           <Route path="/my-orders/:id" element={<MyOrderDetails />} />
 
-          {/* admin route */}
-          <Route path="/admin" element={<AdminStats />} />
-          <Route path="/admin/categories" element={<AdminCategories />} />
-          <Route path="/admin/users" element={<User />} />
-          <Route path="/admin/products" element={<AdminProduct />} />
-          <Route path="/admin/orders" element={<AdminOrder />} />
-          <Route path="/admin/products/:id" element={<ProductDescription />} />
-          <Route path="/admin/orders/:id" element={<AdminOrderDetail />} />
         </Routes>
       </BrowserRouter>
     </Provider>
