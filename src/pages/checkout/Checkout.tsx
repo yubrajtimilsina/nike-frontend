@@ -1,255 +1,244 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+
+import { useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { IData, orderItem, PaymentMethod } from "../../store/orderSlice";
-import toast from "react-hot-toast";
+import { fetchProduct } from "../../store/productSlice";
+import { addToCart } from "../../store/cartSlice";
+import { fetchReview } from "../../store/reviewSlice";
+import Review from "../singleProduct/Review";
 
-function Checkout() {
+const ProductDetail = () => {
+  const { id } = useParams();
   const dispatch = useAppDispatch();
-  const { data } = useAppSelector((store) => store.cart);
+  const { product } = useAppSelector((store) => store.products);
+  const { review } = useAppSelector((store) => store.reviews);
 
-  const total = data.reduce(
-    (total, item) => item.Shoe.price * item.quantity + total,
-    0
+  const isLoggedIn = useAppSelector(
+    (store) => !!store.auth.user.token || !!localStorage.getItem("tokenauth")
   );
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const [item, setItem] = useState<IData>({
-    firstName: "",
-    lastName: "",
-    addressLine: "",
-    city: "",
-    totalPrice: 0,
-    zipcode: "",
-    email: "",
-    phoneNumber: "",
-    street: "",
-    paymentMethod: PaymentMethod.Cod,
-    Shoe: [], // Fixed: Changed 'shoes' to 'Shoe'
-  });
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchProduct(id)).then(() => {
+        dispatch(fetchReview(id));
+      });
+    }
+  }, [id, dispatch]);
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
-    PaymentMethod.Cod
-  );
+  const handleAddToCart = async () => {
+    if (!isLoggedIn) {
+      alert("Please log in to add to cart");
+      return;
+    }
 
-  const handlePaymentMethod = (paymentData: PaymentMethod) => {
-    setPaymentMethod(paymentData);
-    setItem({
-      ...item,
-      paymentMethod: paymentData,
-    });
+    if (!product?.id || !selectedSize || !selectedColor) {
+      alert("Please select a size and color before adding to cart.");
+      return;
+    } else {
+      await dispatch(addToCart(product.id, selectedSize, selectedColor));
+      navigate("/");
+    }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setItem({
-      ...item,
-      [name]: value,
-    });
-  };
+  // Calculate average rating from reviews
+  const averageRating = review.length > 0
+    ? review.reduce((sum, r) => sum + (r.rating ?? 0), 0) / review.length
+    : 0;
+  const roundedRating = Math.round(averageRating);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const availableSizes =
+    product?.sizes && product.sizes.length > 0
+      ? product.sizes
+      : ["No sizes available"];
+  const availableColors =
+    product && (product.colors ?? []).length > 0
+      ? product.colors
+      : ["No colors available"];
 
-    const productData =
-      data.length > 0
-        ? data.map((item) => ({
-            productId: item.Shoe.id,
-            productQty: item.quantity,
-          }))
-        : [];
+  // Map review to match ReviewItem
+  const mappedReviews = review.map((r) => ({
+    id: r.id || "",
+    productId: r.productId || "",
+    userId: r.userId || "",
+    comment: r.comment || "",
+    rating: r.rating ?? 0,
+    createdAt: r.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(), // Add default updatedAt
+    User: r.User || null,
+  }));
 
-    const finalData: IData = {
-      ...item,
-      Shoe: productData, // Fixed: Changed 'shoes' to 'Shoe'
-      totalPrice: total,
-    };
-
-    await dispatch(orderItem(finalData));
-    toast.error("Order created successfully", {
-      duration: 3000,
-      position: "top-center",
-      style: {
-        background: "#dc2626",
-        color: "green",
-        padding: "12px 16px",
-        borderRadius: "8px",
-      },
-    });
-  };
-
+  // ... rest of the JSX remains unchanged (omitted for brevity)
   return (
-    <div className="font-[sans-serif] bg-white">
-      <div className="flex max-sm:flex-col gap-12 max-lg:gap-4 h-full">
-        <div className="bg-gray-100 sm:h-screen sm:sticky sm:top-0 lg:min-w-[370px] sm:min-w-[300px]">
-          <div className="relative h-full">
-            <div className="px-4 py-8 sm:overflow-auto sm:h-[calc(100vh-60px)]">
-              <div className="space-y-4">
-                {data.length > 0 ? (
-                  data.map((item) => (
-                    <div className="flex items-start gap-4" key={item.id}>
-                      <div className="w-32 h-28 max-lg:w-24 max-lg:h-24 flex p-3 shrink-0 bg-gray-200 rounded-md">
-                        <img
-                          src={`http://localhost:5001/${item.Shoe?.images}`}
-                          className="w-full object-contain"
-                        />
-                      </div>
-                      <div className="w-full">
-                        <h3 className="text-sm lg:text-base text-gray-800">
-                          {item.Shoe.name}
-                        </h3>
-                        <ul className="text-xs text-gray-800 space-y-1 mt-3">
-                          <li className="flex flex-wrap gap-4">
-                            Quantity{" "}
-                            <span className="ml-auto">{item?.quantity}</span>
-                          </li>
-                          <li className="flex flex-wrap gap-4">
-                            Total Price{" "}
-                            <span className="ml-auto">
-                              Rs.{item?.Shoe?.price}
-                            </span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p>No Items</p>
-                )}
+    <>
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-sm text-gray-600 mb-6">
+            <Link to="/" className="hover:text-indigo-600">
+              Home
+            </Link>{" "}
+            /{" "}
+            <Link to="/men" className="hover:text-indigo-600">
+              Men
+            </Link>{" "}
+            /
+            <Link to="/men/sneakers" className="hover:text-indigo-600">
+              Sneakers
+            </Link>{" "}
+            / <span className="text-gray-800 font-medium">{product?.name}</span>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+            <div>
+              <div className="mb-4 rounded-lg overflow-hidden">
+                <img
+                  className="w-full h-full object-cover"
+                  src={`http://localhost:5001/${product?.images}`}
+                  alt="Product Image"
+                />
               </div>
             </div>
-            <div className="md:absolute md:left-0 md:bottom-0 bg-gray-200 w-full p-4">
-              <h4 className="flex flex-wrap gap-4 text-sm lg:text-base text-gray-800">
-                Total <span className="ml-auto">Rs.{total}</span>
-              </h4>
+
+            <div>
+              <div className="mb-4 flex justify-between items-start">
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold mb-2">
+                    {product?.name}
+                  </h1>
+                  <p className="text-gray-600 font-bold">{product?.brand}</p>
+                  <p className="text-gray-600">
+                    {product?.Collection?.collectionName}
+                  </p>
+                </div>
+                {product?.isNew && (
+                  <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-md">
+                    New
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center mb-4">
+                <div className="flex mr-2">
+                  {[...Array(5)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className={`w-5 h-5 ${
+                        i < roundedRating
+                          ? "text-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-gray-600 text-sm">
+                  {averageRating.toFixed(1)} ({review.length} {review.length === 1 ? 'review' : 'reviews'})
+                </span>
+              </div>
+
+              <div className="mb-6">
+                <div className="flex items-center">
+                  <span className="text-2xl font-bold text-indigo-600 mr-3">
+                    ${product?.price?.toFixed(2)}
+                  </span>
+                  {(product?.discount ?? 0) > 0 && (
+                    <>
+                      <span className="text-gray-400 line-through mr-2">
+                        ${product?.originalPrice?.toFixed(2)}
+                      </span>
+                      <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-0.5 rounded">
+                        Save {product?.discount ?? 0}%
+                      </span>
+                    </>
+                  )}
+                </div>
+                {(product?.totalStock ?? 0) > 0 ? (
+                  <span className="text-green-600 text-sm">In Stock</span>
+                ) : (
+                  <span className="text-red-600 text-sm">Out of Stock</span>
+                )}
+              </div>
+
+              <div className="mb-6">
+                <h3 className="font-bold mb-2">Select Size</h3>
+                <div className="flex flex-wrap gap-2">
+                  {availableSizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() =>
+                        size !== "No sizes available" && setSelectedSize(size)
+                      }
+                      className={`px-4 py-2 border rounded-md ${
+                        selectedSize === size
+                          ? "bg-indigo-600 text-white border-indigo-600"
+                          : "bg-white border-gray-300 hover:border-indigo-600"
+                      } ${
+                        size === "No sizes available"
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                      disabled={size === "No sizes available"}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <h3 className="font-bold mb-2">Select Color</h3>
+                <div className="flex flex-wrap gap-2">
+                  {availableColors.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() =>
+                        color !== "No colors available" &&
+                        setSelectedColor(color)
+                      }
+                      className={`px-4 py-2 border rounded-md ${
+                        selectedColor === color
+                          ? "bg-indigo-600 text-white border-indigo-600"
+                          : "bg-white border-gray-300 hover:border-indigo-600"
+                      } ${
+                        color === "No colors available"
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                      disabled={color === "No colors available"}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-700"
+                >
+                  Add to Cart
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <h3 className="font-bold mb-2">Description</h3>
+                <p className="text-gray-600">{product?.description}</p>
+              </div>
             </div>
           </div>
         </div>
-        <div className="max-w-4xl w-full h-max rounded-md px-4 py-8 sticky top-0">
-          <h2 className="text-2xl font-bold text-gray-800">
-            Complete your order
-          </h2>
-          <form className="mt-8" onSubmit={handleSubmit}>
-            <div>
-              <h3 className="text-sm lg:text-base text-gray-800 mb-4">
-                Personal Details
-              </h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="firstName"
-                  onChange={handleChange}
-                  placeholder="First Name"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  onChange={handleChange}
-                  placeholder="Last Name"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  onChange={handleChange}
-                  placeholder="Email"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="number"
-                  name="phoneNumber"
-                  onChange={handleChange}
-                  placeholder="Phone No."
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-              </div>
-            </div>
-            <div className="mt-8">
-              <h3 className="text-sm lg:text-base text-gray-800 mb-4">
-                Shipping Address
-              </h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="addressLine"
-                  onChange={handleChange}
-                  placeholder="Address Line"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="text"
-                  name="city"
-                  onChange={handleChange}
-                  placeholder="City"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="text"
-                  name="street"
-                  onChange={handleChange}
-                  placeholder="Street"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="text"
-                  name="state"
-                  onChange={handleChange}
-                  placeholder="State"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="text"
-                  name="zipcode"
-                  onChange={handleChange}
-                  placeholder="Zip Code"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <div>
-                  <label htmlFor="paymentMethod">Payment Method: </label>
-                  <select
-                    id="paymentMethod"
-                    onChange={(e) =>
-                      handlePaymentMethod(e.target.value as PaymentMethod)
-                    }
-                    className="mt-1 px-4 py-2 rounded-md bg-gray-100 text-sm w-full"
-                  >
-                    <option value={PaymentMethod.Cod}>COD</option>
-                    <option value={PaymentMethod.Khalti}>Khalti</option>
-                    <option value={PaymentMethod.Esewa}>Esewa</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex gap-4 max-md:flex-col mt-8">
-                {paymentMethod === PaymentMethod.Cod && (
-                  <button
-                    type="submit"
-                    className="rounded-md px-4 py-2.5 w-full text-sm bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    Pay on COD
-                  </button>
-                )}
-                {paymentMethod === PaymentMethod.Khalti && (
-                  <button
-                    type="submit"
-                    className="rounded-md px-4 py-2.5 w-full text-sm bg-purple-600 hover:bg-purple-700 text-white"
-                  >
-                    Pay with Khalti
-                  </button>
-                )}
-                {paymentMethod === PaymentMethod.Esewa && (
-                  <button
-                    type="submit"
-                    className="rounded-md px-4 py-2.5 w-full text-sm bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    Pay with Esewa
-                  </button>
-                )}
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+      </section>
+      <section>
+        <Review key={product?.id} review={mappedReviews} productId={product?.id!} />
+      </section>
+    </>
   );
-}
+};
 
-export default Checkout;
+export default ProductDetail;
