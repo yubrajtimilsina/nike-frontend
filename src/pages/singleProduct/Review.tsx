@@ -1,3 +1,4 @@
+
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { createReview, removeReview } from "../../store/reviewSlice";
@@ -47,7 +48,17 @@ const Review: React.FC<ReviewProps> = ({ review, productId }) => {
       alert("Please select a rating between 1 and 5.");
       return;
     }
-    await dispatch(createReview({ rating, comment, productId }));
+    await dispatch(
+      createReview({
+        rating,
+        comment,
+        productId,
+        id: "", // Placeholder: Backend should generate
+        userId: "", // Placeholder: Backend should use authenticated user
+        createdAt: new Date().toISOString(), // Default value
+        User: null, // Optional, set to null
+      })
+    );
     setComment("");
     setRating(0);
   };

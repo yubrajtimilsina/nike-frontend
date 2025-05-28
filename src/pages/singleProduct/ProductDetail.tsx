@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -10,7 +11,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const { product } = useAppSelector((store) => store.products);
-  const { review} = useAppSelector((store) => store.reviews);
+  const { review } = useAppSelector((store) => store.reviews);
 
   const isLoggedIn = useAppSelector(
     (store) => !!store.auth.user.token || !!localStorage.getItem("tokenauth")
@@ -43,7 +44,7 @@ const ProductDetail = () => {
   };
 
   // Calculate average rating from reviews
-  const averageRating = review.length > 0 
+  const averageRating = review.length > 0
     ? review.reduce((sum, r) => sum + (r.rating ?? 0), 0) / review.length
     : 0;
   const roundedRating = Math.round(averageRating);
@@ -56,6 +57,12 @@ const ProductDetail = () => {
     product && (product.colors ?? []).length > 0
       ? product.colors
       : ["No colors available"];
+
+  // Map review to include updatedAt for ReviewItem compatibility
+  const mappedReviews = review.map((r) => ({
+    ...r,
+    updatedAt: r.updatedAt || new Date().toISOString(), // Provide default updatedAt
+  }));
 
   return (
     <>
@@ -221,7 +228,7 @@ const ProductDetail = () => {
         </div>
       </section>
       <section>
-        <Review key={product?.id} review={review} productId={product?.id} />
+        <Review key={product?.id} review={mappedReviews} productId={product?.id!} /> {/* Fixed: Use mappedReviews and product?.id! */}
       </section>
     </>
   );

@@ -1,8 +1,10 @@
+
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { registerUser, setStatus } from "../../store/authSlice";
 import { useNavigate, Link } from "react-router-dom";
 import { Status } from "../../globals/types/types";
+
 const Register = () => {
   const { status } = useAppSelector((store) => store.auth);
   const dispatch = useAppDispatch();
@@ -12,6 +14,7 @@ const Register = () => {
     email: "",
     password: "",
   });
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setData({
@@ -19,18 +22,25 @@ const Register = () => {
       [name]: value,
     });
   };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(registerUser(data));
+    dispatch(
+      registerUser({
+        ...data,
+        id: "", // Placeholder: Backend should generate
+        token: "", // Placeholder: Backend should generate
+      })
+    );
   };
+
   useEffect(() => {
     if (status === Status.SUCCESS) {
       navigate("/login");
       dispatch(setStatus(Status.LOADING));
-      return
-    } 
-      dispatch(setStatus(Status.ERROR));
-    
+      return;
+    }
+    dispatch(setStatus(Status.ERROR));
   }, [status, dispatch, navigate]);
 
   return (
@@ -50,7 +60,7 @@ const Register = () => {
                 name="username"
                 value={data.username}
                 required={true}
-                autoFocus={true} 
+                autoFocus={true}
                 onChange={handleChange}
               />
             </div>
@@ -80,7 +90,7 @@ const Register = () => {
                 value={data.password}
                 required={true}
                 autoComplete="new-password"
-                onChange={handleChange}            
+                onChange={handleChange}
               />
             </div>
             <div className="flex items-center justify-between mt-8">
@@ -90,7 +100,12 @@ const Register = () => {
               >
                 Register
               </button>
-              <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-700">Already registered?</Link>
+              <Link
+                to="/login"
+                className="font-semibold text-indigo-600 hover:text-indigo-700"
+              >
+                Already registered?
+              </Link>
             </div>
           </form>
           <aside className="w-full">
@@ -103,12 +118,9 @@ const Register = () => {
                 </li>
                 <li>
                   Users must not use offensive, vulgar, or otherwise
-                  inappropriate language in their username or profile
-                  information
+                  inappropriate language in their username or profile information
                 </li>
-                <li>
-                  Users must not create multiple accounts for the same person.
-                </li>
+                <li>Users must not create multiple accounts for the same person.</li>
               </ul>
             </div>
           </aside>

@@ -1,14 +1,14 @@
+
 import { Link } from "react-router-dom";
 import { IProduct } from "../../../globals/types/types";
 
+// Redefine ICardProps to override images type
 interface ICardProps {
-  product: IProduct;
+  product: Omit<IProduct, "images"> & { images: string[] }; // Override images to string[]
 }
 
 const ProductCard: React.FC<ICardProps> = ({ product }) => {
   // Determine the image URL
-  
-
   return (
     <Link to={`/men/${product.brand}/${product.id}`}>
       <div className="group relative bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-300">
@@ -29,15 +29,14 @@ const ProductCard: React.FC<ICardProps> = ({ product }) => {
         {/* Product Image */}
         <div className="h-full w-full overflow-hidden object-cover ">
           <img
-  src={
-    product?.images?.[0]?.includes("cloudinary.com")
-      ? product?.images[0]
-      : `http://localhost:5001/${product?.images}`
-  }
-  alt={product?.name}
-  className="w-full h-auto rounded"
-/>
-
+            src={
+              product?.images?.[0]?.includes("cloudinary.com")
+                ? product?.images[0]
+                : `http://localhost:5001/${product?.images[0]}` // Fixed: Changed product?.images to product?.images[0]
+            }
+            alt={product?.name}
+            className="w-full h-auto rounded"
+          />
         </div>
 
         {/* Product Info */}

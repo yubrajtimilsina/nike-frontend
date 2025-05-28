@@ -1,255 +1,253 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { IData, orderItem, PaymentMethod } from "../../store/orderSlice";
+import { logout } from "../../store/authSlice";
+import { Link, useNavigate } from "react-router-dom";
+import { fetchCartItems } from "../../store/cartSlice";
 import toast from "react-hot-toast";
 
-function Checkout() {
-  const dispatch = useAppDispatch();
-  const { data } = useAppSelector((store) => store.cart);
+export default function Navbar() {
+  
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+  const reduxToken = useAppSelector((store) => store.auth.user.token);
+  const navigate = useNavigate();
+  const dispatch=useAppDispatch()
 
-  const total = data.reduce(
-    (total, item) => item.Shoe.price * item.quantity + total,
-    0
-  );
+  const {data}=useAppSelector((store)=>store.cart)
+  
 
-  const [item, setItem] = useState<IData>({
-    firstName: "",
-    lastName: "",
-    addressLine: "",
-    city: "",
-    totalPrice: 0,
-    zipcode: "",
-    email: "",
-    phoneNumber: "",
-    street: "",
-    paymentMethod: PaymentMethod.Cod,
-    Shoe: [], // Fixed: Changed 'shoes' to 'Shoe'
-  });
+  useEffect(() => {
+    const localToken = localStorage.getItem("tokenauth");
+    const loggedIn = !!reduxToken || !!localToken;
+    setIsLogin(loggedIn);
+  }, [reduxToken]);
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
-    PaymentMethod.Cod
-  );
-
-  const handlePaymentMethod = (paymentData: PaymentMethod) => {
-    setPaymentMethod(paymentData);
-    setItem({
-      ...item,
-      paymentMethod: paymentData,
-    });
+  const handleCartClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isLogin && data.length>0) {
+       dispatch(fetchCartItems());
+    } else {
+      e.preventDefault();
+      toast.error("No items in the cart", {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#dc2626",
+          color: "#ffffff",
+          padding: "12px 16px",
+          borderRadius: "8px",
+        },
+      });
+    }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setItem({
-      ...item,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const productData =
-      data.length > 0
-        ? data.map((item) => ({
-            productId: item.Shoe.id,
-            productQty: item.quantity,
-          }))
-        : [];
-
-    const finalData: IData = {
-      ...item,
-      Shoe: productData, // Fixed: Changed 'shoes' to 'Shoe'
-      totalPrice: total,
-    };
-
-    await dispatch(orderItem(finalData));
-    toast.error("Order created successfully", {
-      duration: 3000,
-      position: "top-center",
-      style: {
-        background: "#dc2626",
-        color: "green",
-        padding: "12px 16px",
-        borderRadius: "8px",
-      },
-    });
+  const handleLogout = () => {
+    localStorage.removeItem("tokenauth");
+    setIsLogin(false);
+    setMobileMenuOpen(false);
+    dispatch(logout());
+    navigate("/");
   };
 
   return (
-    <div className="font-[sans-serif] bg-white">
-      <div className="flex max-sm:flex-col gap-12 max-lg:gap-4 h-full">
-        <div className="bg-gray-100 sm:h-screen sm:sticky sm:top-0 lg:min-w-[370px] sm:min-w-[300px]">
-          <div className="relative h-full">
-            <div className="px-4 py-8 sm:overflow-auto sm:h-[calc(100vh-60px)]">
-              <div className="space-y-4">
-                {data.length > 0 ? (
-                  data.map((item) => (
-                    <div className="flex items-start gap-4" key={item.id}>
-                      <div className="w-32 h-28 max-lg:w-24 max-lg:h-24 flex p-3 shrink-0 bg-gray-200 rounded-md">
-                        <img
-                          src={`http://localhost:5001/${item.Shoe?.images}`}
-                          className="w-full object-contain"
-                        />
-                      </div>
-                      <div className="w-full">
-                        <h3 className="text-sm lg:text-base text-gray-800">
-                          {item.Shoe.name}
-                        </h3>
-                        <ul className="text-xs text-gray-800 space-y-1 mt-3">
-                          <li className="flex flex-wrap gap-4">
-                            Quantity{" "}
-                            <span className="ml-auto">{item?.quantity}</span>
-                          </li>
-                          <li className="flex flex-wrap gap-4">
-                            Total Price{" "}
-                            <span className="ml-auto">
-                              Rs.{item?.Shoe?.price}
-                            </span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p>No Items</p>
-                )}
-              </div>
+    <header className="sticky top-0 z-50 bg-white shadow-sm">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-between items-center">
+          <Link to="/" className="text-2xl font-bold text-indigo-600">
+            Nike
+          </Link>
+
+          <nav className="hidden md:flex space-x-8 items-center">
+            <Link to="/" className="font-medium hover:text-indigo-600">
+              Home
+            </Link>
+            <Link to="/man" className="font-medium hover:text-indigo-600">
+              Men
+            </Link>
+            <Link to="/women" className="font-medium hover:text-indigo-600">
+              Women
+            </Link>
+            <Link
+              to="/collections"
+              className="font-medium hover:text-indigo-600"
+            >
+              Collections
+            </Link>
+            <Link to="/my-orders" className="font-medium hover:text-indigo-600">
+              My Orders
+            </Link>
+
+            <div className="ml-4">
+              {isLogin ? (
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition text-sm"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition text-sm"
+                >
+                  Login
+                </Link>
+              )}
             </div>
-            <div className="md:absolute md:left-0 md:bottom-0 bg-gray-200 w-full p-4">
-              <h4 className="flex flex-wrap gap-4 text-sm lg:text-base text-gray-800">
-                Total <span className="ml-auto">Rs.{total}</span>
-              </h4>
+          </nav>
+
+          <div className="flex items-center space-x-4">
+            <button className="p-2 rounded-full hover:bg-gray-100 hidden sm:inline-block">
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+
+            <div className="relative">
+              <Link to="/my-cart" onClick={handleCartClick}>
+                <button className="p-2 rounded-full hover:bg-gray-100">
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                    />
+                  </svg>
+                </button>
+              </Link>
+
+              {isLogin && data.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                  {data.length}
+                </span>
+              )}
             </div>
+
+            {!isLogin && (
+              <Link
+                to="/login"
+                className="p-2 rounded-full hover:bg-gray-100 hidden sm:inline-block"
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                <span className="sr-only">Account</span>
+              </Link>
+            )}
+
+            <button
+              className="md:hidden p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-label="Toggle menu"
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d={
+                    mobileMenuOpen
+                      ? "M6 18L18 6M6 6l12 12"
+                      : "M4 6h16M4 12h16M4 18h16"
+                  }
+                />
+              </svg>
+            </button>
           </div>
         </div>
-        <div className="max-w-4xl w-full h-max rounded-md px-4 py-8 sticky top-0">
-          <h2 className="text-2xl font-bold text-gray-800">
-            Complete your order
-          </h2>
-          <form className="mt-8" onSubmit={handleSubmit}>
-            <div>
-              <h3 className="text-sm lg:text-base text-gray-800 mb-4">
-                Personal Details
-              </h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="firstName"
-                  onChange={handleChange}
-                  placeholder="First Name"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  onChange={handleChange}
-                  placeholder="Last Name"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  onChange={handleChange}
-                  placeholder="Email"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="number"
-                  name="phoneNumber"
-                  onChange={handleChange}
-                  placeholder="Phone No."
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-              </div>
-            </div>
-            <div className="mt-8">
-              <h3 className="text-sm lg:text-base text-gray-800 mb-4">
-                Shipping Address
-              </h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="addressLine"
-                  onChange={handleChange}
-                  placeholder="Address Line"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="text"
-                  name="city"
-                  onChange={handleChange}
-                  placeholder="City"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="text"
-                  name="street"
-                  onChange={handleChange}
-                  placeholder="Street"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="text"
-                  name="state"
-                  onChange={handleChange}
-                  placeholder="State"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <input
-                  type="text"
-                  name="zipcode"
-                  onChange={handleChange}
-                  placeholder="Zip Code"
-                  className="px-4 py-3 bg-gray-100 text-sm rounded-md"
-                />
-                <div>
-                  <label htmlFor="paymentMethod">Payment Method: </label>
-                  <select
-                    id="paymentMethod"
-                    onChange={(e) =>
-                      handlePaymentMethod(e.target.value as PaymentMethod)
-                    }
-                    className="mt-1 px-4 py-2 rounded-md bg-gray-100 text-sm w-full"
-                  >
-                    <option value={PaymentMethod.Cod}>COD</option>
-                    <option value={PaymentMethod.Khalti}>Khalti</option>
-                    <option value={PaymentMethod.Esewa}>Esewa</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex gap-4 max-md:flex-col mt-8">
-                {paymentMethod === PaymentMethod.Cod && (
+
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pb-4">
+            <nav className="flex flex-col space-y-3">
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="font-medium hover:text-indigo-600 py-2"
+              >
+                Home
+              </Link>
+              <Link
+                to="/man"
+                onClick={() => setMobileMenuOpen(false)}
+                className="font-medium hover:text-indigo-600 py-2"
+              >
+                Men
+              </Link>
+              <Link
+                to="/women"
+                onClick={() => setMobileMenuOpen(false)}
+                className="font-medium hover:text-indigo-600 py-2"
+              >
+                Women
+              </Link>
+              <Link
+                to="/collections"
+                onClick={() => setMobileMenuOpen(false)}
+                className="font-medium hover:text-indigo-600 py-2"
+              >
+                Collections
+              </Link>
+              <Link
+                to="/contact"
+                onClick={() => setMobileMenuOpen(false)}
+                className="font-medium hover:text-indigo-600 py-2"
+              >
+                Contact
+              </Link>
+
+              <div className="pt-2">
+                {isLogin ? (
                   <button
-                    type="submit"
-                    className="rounded-md px-4 py-2.5 w-full text-sm bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={handleLogout}
+                    className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
                   >
-                    Pay on COD
+                    Logout
                   </button>
-                )}
-                {paymentMethod === PaymentMethod.Khalti && (
-                  <button
-                    type="submit"
-                    className="rounded-md px-4 py-2.5 w-full text-sm bg-purple-600 hover:bg-purple-700 text-white"
+                ) : (
+                  <Link
+                    to="/login"
+                    className="block w-full text-center bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
-                    Pay with Khalti
-                  </button>
-                )}
-                {paymentMethod === PaymentMethod.Esewa && (
-                  <button
-                    type="submit"
-                    className="rounded-md px-4 py-2.5 w-full text-sm bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    Pay with Esewa
-                  </button>
+                    Login
+                  </Link>
                 )}
               </div>
-            </div>
-          </form>
-        </div>
+            </nav>
+          </div>
+        )}
       </div>
-    </div>
+    </header>
   );
 }
-
-export default Checkout;

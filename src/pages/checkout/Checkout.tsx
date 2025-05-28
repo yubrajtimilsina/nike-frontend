@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent,  useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { IData, orderItem, PaymentMethod } from "../../store/orderSlice";
 import toast from "react-hot-toast";
@@ -23,7 +23,7 @@ function Checkout() {
     phoneNumber: "",
     street: "",
     paymentMethod: PaymentMethod.Cod,
-    shoes: [],
+    Shoe: [], // Fixed: Changed 'shoes' to 'Shoe'
   });
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
@@ -59,22 +59,21 @@ function Checkout() {
 
     const finalData: IData = {
       ...item,
-      shoes: productData,
+      Shoe: productData, // Fixed: Changed 'shoes' to 'Shoe'
       totalPrice: total,
     };
 
     await dispatch(orderItem(finalData));
-       toast.error("Order created successfully", {
-        duration: 3000,
-        position: "top-center",
-        style: {
-          background: "#dc2626",
-          color: "green",
-          padding: "12px 16px",
-          borderRadius: "8px",
-        },
-      });
-    
+    toast.error("Order created successfully", {
+      duration: 3000,
+      position: "top-center",
+      style: {
+        background: "#dc2626",
+        color: "green",
+        padding: "12px 16px",
+        borderRadius: "8px",
+      },
+    });
   };
 
   return (

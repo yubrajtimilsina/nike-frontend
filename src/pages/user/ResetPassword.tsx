@@ -1,9 +1,9 @@
-import { ChangeEvent, FormEvent,  useState } from "react";
+
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { resetPassword, setStatus } from "../../store/authSlice";
+import { resetPassword } from "../../store/authSlice";
 import { useNavigate, Link } from "react-router-dom";
 import { Status } from "../../globals/types/types";
-
 
 const ResetPassword = () => {
   const dispatch = useAppDispatch();
@@ -57,7 +57,6 @@ const ResetPassword = () => {
                     placeholder="Email"
                     value={data.email}
                     onChange={handleChange}
-                    
                   />
                   <input
                     className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
@@ -66,7 +65,6 @@ const ResetPassword = () => {
                     placeholder="New Password"
                     value={data.newPassword}
                     onChange={handleChange}
-
                   />
                   <input
                     className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
@@ -82,9 +80,7 @@ const ResetPassword = () => {
                     name="otp"
                     placeholder="Enter your OTP code"
                     value={data.otp}
-
                     onChange={handleChange}
-
                   />
                   <button
                     type="submit"
