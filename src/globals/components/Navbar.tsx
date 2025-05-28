@@ -22,7 +22,7 @@ export default function Navbar() {
     setIsLogin(loggedIn);
   }, [reduxToken]); // ✅ Fixed: Removed dispatch
 
-  const handleCartClick = (e) => {
+  const handleCartClick = (e:any)=> {
     if (isLogin && data.length>0) {
        dispatch(fetchCartItems());
     } else {

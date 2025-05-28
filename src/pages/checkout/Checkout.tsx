@@ -1,7 +1,7 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent,  useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { IData, orderItem, PaymentMethod } from "../../store/orderSlice";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 function Checkout() {
   const dispatch = useAppDispatch();
