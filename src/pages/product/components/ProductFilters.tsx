@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { fetchProducts } from "../../../store/productSlice";
 import ProductCard from "./ProductCard";
@@ -8,17 +8,15 @@ const ProductFilters = () => {
   const [activeBrand, setActiveBrand] = useState<string>("All");
   const dispatch = useAppDispatch();
   const { products } = useAppSelector((store) => store.products);
-  const { brand,collection } = useParams();
+  const { brand, collection } = useParams();
   const navigate = useNavigate();
-
-  
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
   useEffect(() => {
-  setActiveBrand(brand || "All");
+    setActiveBrand(brand || "All");
   }, [brand]);
 
   const brands = ["All", ...new Set(products.map((product) => product.brand))];
@@ -26,20 +24,19 @@ const ProductFilters = () => {
     const matchBrand = brand
       ? product.brand.toLowerCase() === brand.toLowerCase()
       : true;
-  
+
     const matchCollection = collection
-      ? product.Collection?.collectionName.toLowerCase() === collection.toLowerCase()
+      ? product.Collection?.collectionName.toLowerCase() ===
+        collection.toLowerCase()
       : true;
-  
+
     return matchBrand && matchCollection;
   });
-  
-  
+
   const handleBrandClick = (selectedBrand: string) => {
     if (selectedBrand === "All") navigate(`/${collection}`);
     else navigate(`/${collection}/${selectedBrand}`);
   };
-  
 
   return (
     <section className="py-8 bg-gray-50">
@@ -69,7 +66,15 @@ const ProductFilters = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filtered.length > 0 &&
             filtered.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={{
+                  ...product,
+                  images: Array.isArray(product.images)
+                    ? product.images
+                    : ([product.images].filter(Boolean) as string[]),
+                }}
+              />
             ))}
         </div>
       </section>

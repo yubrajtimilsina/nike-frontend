@@ -58,10 +58,16 @@ const ProductDetail = () => {
       ? product.colors
       : ["No colors available"];
 
-  // Map review to include updatedAt for ReviewItem compatibility
+  // Map review to match ReviewItem
   const mappedReviews = review.map((r) => ({
-    ...r,
-    updatedAt: r.updatedAt || new Date().toISOString(), // Provide default updatedAt
+    id: r.id || "",
+    productId: r.productId || "",
+    userId: r.userId || "",
+    comment: r.comment || "",
+    rating: r.rating ?? 0,
+    createdAt: r.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(), // Default updatedAt
+    User: r.User ? { id: r.User.id || "", username: r.User.username || "" } : { id: "", username: "" },
   }));
 
   return (
@@ -80,12 +86,12 @@ const ProductDetail = () => {
             <Link to="/men/sneakers" className="hover:text-indigo-600">
               Sneakers
             </Link>{" "}
-            / <span className="text-gray-800 font-medium">{product?.name}</span>
+            / <span className="text-gray-800 font-semibold">{product?.name}</span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             <div>
-              <div className="mb-4 rounded-lg overflow-hidden">
+              <div className="mb-4 rounded-lg">
                 <img
                   className="w-full h-full object-cover"
                   src={`http://localhost:5001/${product?.images}`}
@@ -97,7 +103,7 @@ const ProductDetail = () => {
             <div>
               <div className="mb-4 flex justify-between items-start">
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold mb-2">
+                  <h1 className="text-2xl md:text-2xl font-bold mb-2">
                     {product?.name}
                   </h1>
                   <p className="text-gray-600 font-bold">{product?.brand}</p>
@@ -228,7 +234,7 @@ const ProductDetail = () => {
         </div>
       </section>
       <section>
-        <Review key={product?.id} review={mappedReviews} productId={product?.id!} /> {/* Fixed: Use mappedReviews and product?.id! */}
+        <Review key={product?.id} review={mappedReviews} productId={product?.id!} />
       </section>
     </>
   );

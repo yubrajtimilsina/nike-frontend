@@ -56,7 +56,7 @@ const Review: React.FC<ReviewProps> = ({ review, productId }) => {
         id: "", // Placeholder: Backend should generate
         userId: "", // Placeholder: Backend should use authenticated user
         createdAt: new Date().toISOString(), // Default value
-        User: null, // Optional, set to null
+        User: { id: "", username: "" }, // Default user object
       })
     );
     setComment("");
@@ -92,7 +92,7 @@ const Review: React.FC<ReviewProps> = ({ review, productId }) => {
         <div className="max-w-4xl mx-auto">
           <div className="space-y-4 mb-8">
             {review.length === 0 ? (
-              <p className="text-gray-500 italic text-sm lg:text-base">
+              <p className="text-gray-600 italic text-sm lg:text-base">
                 No reviews yet. Be the first to review this product!
               </p>
             ) : (
@@ -153,7 +153,7 @@ const Review: React.FC<ReviewProps> = ({ review, productId }) => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <textarea
-                  className="px-4 py-3 bg-white focus:bg-gray-50 text-gray-800 w-full text-sm rounded-md focus:outline-blue-600 resize-none"
+                  className="px-4 py-3 bg-white focus:bg-gray-50 text-gray-800 w-full text-sm rounded-md focus:outline-gray-600 resize-none"
                   placeholder="Write your comment..."
                   rows={4}
                   value={comment}
