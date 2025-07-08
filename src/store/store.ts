@@ -4,6 +4,7 @@ import productSlice from "./productSlice";
 import reviewSlice from "./reviewSlice";
 import cartSlice from './cartSlice'
 import orderSlice from './orderSlice'
+import chatBoxSlice from "./chatBoxSlice";
 
 const store = configureStore({
     reducer : {
@@ -13,6 +14,7 @@ const store = configureStore({
         reviews:reviewSlice,
         cart:cartSlice,
         orders:orderSlice,
+        chatMessages: chatBoxSlice,
         
 
     }

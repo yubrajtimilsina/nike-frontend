@@ -11,10 +11,12 @@ interface IProduct {
   orderStatus: Status;
   paymentId: string;
   Payment?: {
+    pidx: string; // ✅ Added this line to fix type error
     paymentMethod: PaymentMethod;
     paymentStatus: PaymentStatus;
   };
 }
+
 export interface IOrderItems extends IProduct {
   id: string;
   orderId: string;
@@ -70,65 +72,59 @@ const orderSlice = createSlice({
     setKhaltiUrl(state: IOrder, action: PayloadAction<string>) {
       state.khaltiUrl = action.payload;
     },
-    
-  updateKhaltiPaymentStatus(
-    state: IOrder,
-    action: PayloadAction<{ pidx: string; status: PaymentStatus }>
-  ) {
-    const { pidx, status } = action.payload;
-    
-    // Update payment status in items array
-    const updatedItems = state.items.map(item => {
-      if (item.Payment?.pidx === pidx) {
-        return {
-          ...item,
-          Payment: {
-            ...item.Payment,
-            paymentStatus: status,
-          }
-        };
-      }
-      return item;
-    });
 
-    // Update payment status in orderDetails array
-    const updatedDetails = state.orderDetails.map(detail => {
-      if (detail.Order?.Payment?.pidx === pidx) {
-        return {
-          ...detail,
-          Order: {
-            ...detail.Order,
+    updateKhaltiPaymentStatus(
+      state: IOrder,
+      action: PayloadAction<{ pidx: string; status: PaymentStatus }>
+    ) {
+      const { pidx, status } = action.payload;
+
+      const updatedItems = state.items.map(item => {
+        if (item.Payment?.pidx === pidx) {
+          return {
+            ...item,
             Payment: {
-              ...detail.Order.Payment,
+              ...item.Payment,
               paymentStatus: status,
             }
-          }
-        };
-      }
-      return detail;
-    });
+          };
+        }
+        return item;
+      });
 
-    state.items = updatedItems;
-    state.orderDetails = updatedDetails;
-  }
-},
+      const updatedDetails = state.orderDetails.map(detail => {
+        if (detail.Order?.Payment?.pidx === pidx) {
+          return {
+            ...detail,
+            Order: {
+              ...detail.Order,
+              Payment: {
+                ...detail.Order.Payment,
+                paymentStatus: status,
+              }
+            }
+          };
+        }
+        return detail;
+      });
+
+      state.items = updatedItems;
+      state.orderDetails = updatedDetails;
+    },
 
     updateOrderStatusToCancel(
       state: IOrder,
       action: PayloadAction<{ orderId: string }>
     ) {
       const orderId = action.payload.orderId;
-      // state.items.map((item)=>item.)
-      // console.log(state.items,"ST")
-      // const data =  state.orderDetails.map((order)=>order.orderId == orderId ? {...order, [order.Order.orderStatus] : OrderStatus.Cancelled} : order)
       const datas = state.orderDetails.find(
         (order) => order.orderId === orderId
       );
       if (datas && datas.Order) {
         datas.Order.orderStatus = OrderStatus.Cancelled;
       }
-      // state.orderDetails = data
     },
+
     updateOrderStatusinSlice(
       state: IOrder,
       action: PayloadAction<{
@@ -146,6 +142,7 @@ const orderSlice = createSlice({
       console.log(updateOrder, "UO");
       state.items = updateOrder;
     },
+
     updatePaymentStatusinSlice(
       state: IOrder,
       action: PayloadAction<{
@@ -156,7 +153,6 @@ const orderSlice = createSlice({
     ) {
       const { status, orderId } = action.payload;
 
-      // Update in items array
       const updatedItems = state.items.map((item) =>
         item.orderId === orderId
           ? {
@@ -164,13 +160,12 @@ const orderSlice = createSlice({
               Payment: {
                 ...item.Payment,
                 paymentStatus: status,
-                paymentMethod: item.Payment?.paymentMethod ?? PaymentMethod.Cod, // Ensure paymentMethod is always defined
+                paymentMethod: item.Payment?.paymentMethod ?? PaymentMethod.Cod,
               },
             }
           : item
       );
 
-      // Update in orderDetails array
       const updatedDetails = state.orderDetails.map((detail) => {
         if (detail.orderId === orderId && detail.Order) {
           return {
@@ -190,13 +185,11 @@ const orderSlice = createSlice({
       state.items = updatedItems;
       state.orderDetails = updatedDetails;
     },
-    
-  
   },
-  
 });
 
 export default orderSlice.reducer;
+
 export const {
   setItems,
   setStatus,
@@ -263,6 +256,7 @@ export function fetchMyOrderDetails(id: string) {
     }
   };
 }
+
 export function cancelOrderAPI(id: string) {
   return async function cancelOrderAPIThunk(dispatch: AppDispatch) {
     try {

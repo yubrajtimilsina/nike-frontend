@@ -6,6 +6,8 @@ import { fetchProduct } from "../../store/productSlice";
 import { addToCart } from "../../store/cartSlice";
 import Review from "./Review";
 import { fetchReview } from "../../store/reviewSlice";
+import ChatBox from "../chat/ChatBox";
+import { getOrCreateChat } from "@/store/chatBoxSlice";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -16,6 +18,9 @@ const ProductDetail = () => {
   const isLoggedIn = useAppSelector(
     (store) => !!store.auth.user.token || !!localStorage.getItem("tokenauth")
   );
+
+   const { chatId, adminId } = useAppSelector((store) => store.chatMessages);
+  const userId = useAppSelector((state) => state.auth.user?.id);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -27,6 +32,12 @@ const ProductDetail = () => {
       });
     }
   }, [id, dispatch]);
+   useEffect(() => {
+    if (id && isLoggedIn && userId) {
+      dispatch(getOrCreateChat(userId, adminId));
+    }
+  }, [id, isLoggedIn, userId, adminId, dispatch]);
+
 
   const handleAddToCart = async () => {
     if (!isLoggedIn) {
@@ -236,6 +247,28 @@ const ProductDetail = () => {
       <section>
         <Review key={product?.id} review={mappedReviews} productId={product?.id!} />
       </section>
+      {isLoggedIn && chatId && userId ? (
+        <section className="container mx-auto px-4 py-8">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-xl font-semibold mb-4">
+              💬 Have questions about this product?
+            </h2>
+            <ChatBox
+              chatId={chatId}
+              userId={userId}
+              otherUserId={adminId}
+            />
+          </div>
+        </section>
+      ) : isLoggedIn ? (
+        <div className="text-center py-4 text-gray-500">
+          Loading chat...
+        </div>
+      ) : (
+        <div className="text-center py-4 text-gray-500">
+          Please log in to chat with support
+        </div>
+      )}
     </>
   );
 };

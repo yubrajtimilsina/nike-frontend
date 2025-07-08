@@ -28,8 +28,8 @@ const Register = () => {
     dispatch(
       registerUser({
         ...data,
-        id: "", // Placeholder: Backend should generate
-        token: "", // Placeholder: Backend should generate
+        id: "", 
+        token: "", 
       })
     );
   };
