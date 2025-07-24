@@ -12,7 +12,7 @@ interface ChatBoxProps {
 
 const ChatBox: React.FC<ChatBoxProps> = ({ chatId, userId, otherUserId }) => {
   const dispatch = useAppDispatch();
-  const { messages, messageLoading,  } = useAppSelector((state)=>state.chatMessages);
+  const { messages, messageLoading,  } = useAppSelector((state)=>state.chat);
   const [content, setContent] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 

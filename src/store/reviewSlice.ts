@@ -1,13 +1,13 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/types";
-import { AppDispatch } from "./store";
 import { API, APIS } from "../globals/http";
+import type { AppDispatch } from "./store";
 
 interface user {
   id: string | null;
   username: string | null;
 }
-export interface IData {
+ interface IData {
   id: string | null;
   productId: string | null;
   userId: string | null;
@@ -62,8 +62,13 @@ export function fetchReview(productId: string) {
       const res = await API.get(`/review/${productId}`);
 
       if (res.status === 200) {
-        dispatch(setReview(res.data.data || res.data)); // Handle both response formats
+         // ✅ Ensure review array is correctly extracted
+        const reviewArray = Array.isArray(res.data.data)
+          ? res.data.data
+          : res.data.data?.reviews || [];
+        dispatch(setReview(reviewArray)); 
         dispatch(setStatus(Status.SUCCESS));
+        console.log(reviewArray,"array")
       } else {
         dispatch(setStatus(Status.ERROR));
       }
@@ -80,8 +85,9 @@ export function createReview(data: IData) {
       const res = await APIS.post("/review", data);
 
       if (res.status === 200) {
-        dispatch(setReview(res.data.data));
+        // dispatch(setReview(res.data.data));
         dispatch(setStatus(Status.SUCCESS));
+        console.log(res.data.data,"data")
       } else {
         dispatch(setStatus(Status.ERROR));
       }

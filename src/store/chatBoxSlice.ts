@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "./store";
-import { APIS } from "@/globals/http";
-
+import {APIS} from '../globals/http/index'
 // TYPES
 export interface Message {
   id: string;
@@ -18,17 +17,15 @@ interface ChatState {
   adminId: string;
   loading: boolean;
   error: string | null;
-
   messages: Message[];
   messageLoading: boolean;
 }
 
 const initialState: ChatState = {
   chatId: "",
-  adminId: "4c264ede-84b4-4455-adc1-801fc169e95e", // Default for now
+  adminId: "4c264ede-84b4-4455-adc1-801fc169e95e", // Default adminId
   loading: false,
   error: null,
-
   messages: [],
   messageLoading: false,
 };
@@ -43,16 +40,12 @@ const chatSlice = createSlice({
     setAdminId(state, action: PayloadAction<string>) {
       state.adminId = action.payload;
     },
-
-    // Status
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
-
-    // Messages
     setMessages(state, action: PayloadAction<Message[]>) {
       state.messages = action.payload;
     },
@@ -68,7 +61,6 @@ const chatSlice = createSlice({
   },
 });
 
-// ✅ Export Actions
 export const {
   setChatId,
   setAdminId,
@@ -82,47 +74,73 @@ export const {
 
 export default chatSlice.reducer;
 
-export const selectChatState = (state: RootState) => state.chatMessages;
+export const selectChatState = (state: RootState) => state.chat;
 
-
+// Thunk: Get or create chat
 export const getOrCreateChat = (customerId: string, adminId: string) => {
   return async (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
     dispatch(setError(null));
-
     try {
       const res = await APIS.post("/chats/get-or-create", {
         customerId,
         adminId,
       });
-
-      if (res.status === 200) {
+      if (res.status === 200 && res.data.chat) {
         dispatch(setChatId(res.data.chat.id));
         dispatch(setAdminId(adminId));
       } else {
         dispatch(setError("Failed to create chat"));
       }
     } catch (err: any) {
-      dispatch(setError(err.message || "Chat request failed"));
+      dispatch(setError(err?.response?.data?.message || err.message || "Chat request failed"));
     } finally {
       dispatch(setLoading(false));
     }
   };
 };
 
-// Fetch all messages for a given chat
+// Thunk: Fetch all messages for a given chat
 export const fetchChatMessages = (chatId: string) => {
   return async (dispatch: AppDispatch) => {
     dispatch(setMessageLoading(true));
-
     try {
-      const res = await APIS.get(`/chat/${chatId}/messages`);
-      dispatch(setMessages(res.data.data));
+      const res = await APIS.get(`/chats/${chatId}/messages`);
+      if (res.status === 200 && res.data.data) {
+        dispatch(setMessages(res.data.data));
+      } else {
+        dispatch(setError("Failed to load messages"));
+      }
     } catch (err: any) {
-      console.error("Fetch messages error", err);
-      dispatch(setError("Failed to load messages"));
+      dispatch(setError(err?.response?.data?.message || err.message || "Failed to load messages"));
     } finally {
       dispatch(setMessageLoading(false));
+    }
+  };
+};
+
+// Thunk: Send a message (for REST API, not Socket.io)
+export const sendMessage = (
+  chatId: string,
+  senderId: string,
+  receiverId: string,
+  content: string
+) => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const res = await APIS.post("/chats/send-message", {
+        chatId,
+        senderId,
+        receiverId,
+        content,
+      });
+      if (res.status === 200 && res.data.data) {
+        dispatch(addMessage(res.data.data));
+      } else {
+        dispatch(setError("Failed to send message"));
+      }
+    } catch (err: any) {
+      dispatch(setError(err?.response?.data?.message || err.message || "Failed to send message"));
     }
   };
 };

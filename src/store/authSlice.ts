@@ -61,6 +61,7 @@ const authSlice = createSlice({
       state.status = Status.LOADING;
 
       localStorage.removeItem("tokenauth");
+      localStorage.removeItem("user");
     },
   },
 });
@@ -96,7 +97,17 @@ export function loginUser(data: ILoginUser) {
 
         if (token) {
           localStorage.setItem("tokenauth", token);
+          const userData: IUser = {
+            id,
+            username,
+            email,
+            token,
+            password: null,
+          };
           dispatch(setUser({ id, username, email, password: null, token }));
+             localStorage.setItem("user", JSON.stringify(userData));
+          dispatch(setUser(userData));
+          dispatch(setStatus(Status.SUCCESS));
         } else {
           dispatch(setStatus(Status.ERROR));
         }
@@ -138,6 +149,23 @@ export function resetPassword(data: IResetPassword) {
     } catch (error) {
       console.log(error);
       dispatch(setStatus(Status.ERROR));
+    }
+  };
+}
+export function loadUserFromStorage() {
+  return function loadUserThunk(dispatch: AppDispatch) {
+    const token = localStorage.getItem("tokenauth");
+    const user = localStorage.getItem("user");
+
+    if (token && user) {
+      try {
+        const parsedUser = JSON.parse(user);
+        dispatch(setUser({ ...parsedUser, token }));
+        dispatch(setStatus(Status.SUCCESS));
+      } catch  {
+        console.error("Failed to parse user from storage");
+        dispatch(setStatus(Status.ERROR));
+      }
     }
   };
 }

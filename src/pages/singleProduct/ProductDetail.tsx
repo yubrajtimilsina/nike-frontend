@@ -2,12 +2,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchProduct } from "../../store/productSlice";
+import { fetchProduct, fetchProducts } from "../../store/productSlice";
 import { addToCart } from "../../store/cartSlice";
 import Review from "./Review";
-import { fetchReview } from "../../store/reviewSlice";
-import ChatBox from "../chat/ChatBox";
-import { getOrCreateChat } from "@/store/chatBoxSlice";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -18,27 +15,16 @@ const ProductDetail = () => {
   const isLoggedIn = useAppSelector(
     (store) => !!store.auth.user.token || !!localStorage.getItem("tokenauth")
   );
-
-   const { chatId, adminId } = useAppSelector((store) => store.chatMessages);
-  const userId = useAppSelector((state) => state.auth.user?.id);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchProduct(id)).then(() => {
-        dispatch(fetchReview(id));
-      });
+      dispatch(fetchProducts());
+      dispatch(fetchProduct(id));
     }
-  }, [id, dispatch]);
-   useEffect(() => {
-    if (id && isLoggedIn && userId) {
-      dispatch(getOrCreateChat(userId, adminId));
-    }
-  }, [id, isLoggedIn, userId, adminId, dispatch]);
-
-
+  }, [dispatch, id]);
   const handleAddToCart = async () => {
     if (!isLoggedIn) {
       alert("Please log in to add to cart");
@@ -69,18 +55,6 @@ const ProductDetail = () => {
       ? product.colors
       : ["No colors available"];
 
-  // Map review to match ReviewItem
-  const mappedReviews = review.map((r) => ({
-    id: r.id || "",
-    productId: r.productId || "",
-    userId: r.userId || "",
-    comment: r.comment || "",
-    rating: r.rating ?? 0,
-    createdAt: r.createdAt || new Date().toISOString(),
-    updatedAt: new Date().toISOString(), // Default updatedAt
-    User: r.User ? { id: r.User.id || "", username: r.User.username || "" } : { id: "", username: "" },
-  }));
-
   return (
     <>
       <section className="py-12 bg-white">
@@ -97,12 +71,12 @@ const ProductDetail = () => {
             <Link to="/men/sneakers" className="hover:text-indigo-600">
               Sneakers
             </Link>{" "}
-            / <span className="text-gray-800 font-semibold">{product?.name}</span>
+            / <span className="text-gray-800 font-medium">{product?.name}</span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             <div>
-              <div className="mb-4 rounded-lg">
+              <div className="mb-4 rounded-lg overflow-hidden">
                 <img
                   className="w-full h-full object-cover"
                   src={`http://localhost:5001/${product?.images}`}
@@ -114,7 +88,7 @@ const ProductDetail = () => {
             <div>
               <div className="mb-4 flex justify-between items-start">
                 <div>
-                  <h1 className="text-2xl md:text-2xl font-bold mb-2">
+                  <h1 className="text-2xl md:text-3xl font-bold mb-2">
                     {product?.name}
                   </h1>
                   <p className="text-gray-600 font-bold">{product?.brand}</p>
@@ -245,30 +219,9 @@ const ProductDetail = () => {
         </div>
       </section>
       <section>
-        <Review key={product?.id} review={mappedReviews} productId={product?.id!} />
+        {product?.id &&  <Review key={product?.id} productId={product?.id} />}
+           
       </section>
-      {isLoggedIn && chatId && userId ? (
-        <section className="container mx-auto px-4 py-8">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-xl font-semibold mb-4">
-              💬 Have questions about this product?
-            </h2>
-            <ChatBox
-              chatId={chatId}
-              userId={userId}
-              otherUserId={adminId}
-            />
-          </div>
-        </section>
-      ) : isLoggedIn ? (
-        <div className="text-center py-4 text-gray-500">
-          Loading chat...
-        </div>
-      ) : (
-        <div className="text-center py-4 text-gray-500">
-          Please log in to chat with support
-        </div>
-      )}
     </>
   );
 };
