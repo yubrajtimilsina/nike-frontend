@@ -4,7 +4,7 @@ import Features from "../features/Features";
 import ProductFilters from "../product/components/ProductFilters";
 import PromoBanners from "../promoBanner/PromoBanner";
 
-// components/Hero.jsx
+// components of home pages /Hero.jsx
 export default function Hero() {
   return (
     <>
