@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { deleteCart, updateCart } from "../../store/cartSlice";
 
+//my cart 
 function MyCart() {
   const { data } = useAppSelector((store) => store.cart);
   const dispatch = useAppDispatch();
